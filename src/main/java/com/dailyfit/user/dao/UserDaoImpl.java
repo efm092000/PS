@@ -20,12 +20,20 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void createUser(User user) {
-        //TODO UserDaoImpl.createUser
+        try (ResultSet resultSet = sqlQueryUser(user.email())) {
+            if (!resultSet.next()) {
+                sqlCreateUser(user);
+                return;
+            }
+            System.out.println("User exists");
+        } catch (SQLException e) {
+            throw new RuntimeException("Database error");
+        }
     }
 
     @Override
     public Optional<User> readUser(String email) throws SQLException {
-        try (ResultSet resultSet = queryUser(email)) {
+        try (ResultSet resultSet = sqlQueryUser(email)) {
             String password = resultSet.getString("password");
             String name = resultSet.getString("name");
             if (password != null && name != null) {
@@ -45,7 +53,11 @@ public class UserDaoImpl implements UserDao {
         //TODO UserDaoImpl.deleteUser
     }
 
-    private ResultSet queryUser(String email) throws SQLException {
-        return connection.createStatement().executeQuery(String.format("SELECT password, name FROM users WHERE email = '%s'", email));
+    private ResultSet sqlQueryUser(String email) throws SQLException {
+        return connection.createStatement().executeQuery(String.format("SELECT password, name FROM user WHERE email = '%s'", email));
+    }
+
+    private void sqlCreateUser(User user) throws SQLException {
+        connection.createStatement().execute(String.format("INSERT INTO user (email, password, name) VALUES ('%s', '%s', '%s')", user.email(), user.password(), user.name()));
     }
 }

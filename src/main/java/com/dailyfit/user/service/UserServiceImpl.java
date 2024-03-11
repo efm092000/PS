@@ -22,9 +22,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(User user) {
-        //TODO UserServiceImpl.createUser
-        return null;
+    public User createUser(String email, String password, String name) {
+        //TODO Check for existing user
+        User user = new User(email, password, name);
+        userDao.createUser(user);
+        return user;
     }
 
     @Override
