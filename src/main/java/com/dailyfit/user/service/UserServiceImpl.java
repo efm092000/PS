@@ -22,21 +22,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(String email, String password, String name) {
-        //TODO Check for existing user
+    public User createUser(String email, String password, String name) throws SQLException {
+        /* TODO Check for existing user
+        * 1. Check if user exists
+        * 2. Check if password or name is null
+         */
         User user = new User(email, password, name);
         userDao.createUser(user);
         return user;
     }
 
     @Override
-    public User updateUser(User user) {
-        //TODO UserServiceImpl.updateUser
-        return null;
+    public User updateUser(String email, String password, String name) throws SQLException {
+        /* TODO UserServiceImpl.updateUser
+        * 1. Check if user exists
+        * 2. Check if password or name is null
+         */
+        User user = new User(email, password, name);
+        userDao.updateUser(user);
+        return user;
     }
 
     @Override
-    public void deleteUser(String email) {
-        //TODO UserServiceImpl.deleteUser
+    public void deleteUser(String email) throws SQLException {
+        /* TODO UserServiceImpl.deleteUser
+        * 1. Check if user exists
+         */
+        userDao.deleteUser(email);
     }
 }

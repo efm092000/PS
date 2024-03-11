@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 public interface UserDao {
-    void createUser(User user);
+    void createUser(User user) throws SQLException;
     Optional<User> readUser(String email) throws SQLException;
-    void updateUser(User user);
-    void deleteUser(User user);
+    void updateUser(User user) throws SQLException;
+    void deleteUser(String email) throws SQLException;
 }

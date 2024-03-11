@@ -5,15 +5,13 @@ import com.dailyfit.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/api/user")
 public class UserControllerImpl implements UserController {
 
     private final UserService userService;
@@ -22,7 +20,21 @@ public class UserControllerImpl implements UserController {
         this.userService = userService;
     }
 
-    @GetMapping(value = "/api/user/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{email}")
+    public ResponseEntity<User> createUser(@PathVariable String email,
+                                           @RequestParam String password,
+                                           @RequestParam String name) {
+        System.out.println("User created" + email);
+        User user;
+        try {
+            user = userService.createUser(email, password, name);
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping(value = "/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
         try {
             Optional<User> optionalUser = userService.getUserByEmail(email);
@@ -32,13 +44,27 @@ public class UserControllerImpl implements UserController {
         }
     }
 
-    @GetMapping(value = "/api/create/user")
-    public ResponseEntity<User> createUser(@RequestParam String email,
-                                           @RequestParam String password,
-                                           @RequestParam String name) {
-        System.out.println("User created" + email);
-        User user = userService.createUser(email, password, name);
+    @PutMapping(value = "/{email}")
+    public ResponseEntity<User> updateUser(@PathVariable String email,
+                                           @RequestParam(required = false) String password,
+                                           @RequestParam(required = false) String name) {
+        User user;
+        try {
+            user = userService.updateUser(email, password, name);
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
         return ResponseEntity.ok(user);
     }
 
+
+    @DeleteMapping(value = "/{email}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String email) {
+        try {
+            userService.deleteUser(email);
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        return ResponseEntity.ok().build();
+    }
 }
