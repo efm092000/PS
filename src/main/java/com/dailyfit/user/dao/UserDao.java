@@ -1,4 +1,6 @@
-package com.dailyfit.user;
+package com.dailyfit.user.dao;
+
+import com.dailyfit.user.User;
 
 import java.util.Optional;
 
