@@ -24,7 +24,6 @@ public class UserControllerImpl implements UserController {
     public ResponseEntity<User> createUser(@PathVariable String email,
                                            @RequestParam String password,
                                            @RequestParam String name) {
-        System.out.println("User created" + email);
         User user;
         try {
             user = userService.createUser(email, password, name);
@@ -51,6 +50,10 @@ public class UserControllerImpl implements UserController {
         User user;
         try {
             user = userService.updateUser(email, password, name);
+            Optional<User> optionalUser = userService.getUserByEmail(email);
+            if (optionalUser.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -59,12 +62,12 @@ public class UserControllerImpl implements UserController {
 
 
     @DeleteMapping(value = "/{email}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String email) {
+    public ResponseEntity<String> deleteUser(@PathVariable String email) {
         try {
             userService.deleteUser(email);
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("User was deleted successfully");
     }
 }
