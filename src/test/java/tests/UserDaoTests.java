@@ -1,8 +1,8 @@
 package tests;
 
 import com.dailyfit.user.User;
-import com.dailyfit.user.UserDao;
-import com.dailyfit.user.UserDaoImpl;
+import com.dailyfit.user.dao.UserDao;
+import com.dailyfit.user.dao.UserDaoImpl;
 
 import org.junit.Test;
 

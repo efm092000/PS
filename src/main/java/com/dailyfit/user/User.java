@@ -1,11 +1,15 @@
 package com.dailyfit.user;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonGetter;
+
 import java.util.Objects;
 
+@JsonAutoDetect
 public class User {
-    private final String name;
     private final String email;
-    private final String password;
+    private String name;
+    private String password;
 
     public User(String email, String name, String password) {
         this.name = name;
@@ -24,5 +28,36 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(name, email, password);
+    }
+
+    @Override
+    public String toString() {
+        return "User:" +
+                "name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + "'";
+    }
+
+    @JsonGetter("email")
+    public String email() {
+        return email;
+    }
+
+    @JsonGetter("password")
+    public String password() {
+        return password;
+    }
+
+    public void password(String password) {
+        this.password = password;
+    }
+
+    @JsonGetter("name")
+    public String name() {
+        return name;
+    }
+
+    public void name(String name) {
+        this.name = name;
     }
 }
