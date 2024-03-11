@@ -4,6 +4,7 @@ import com.dailyfit.user.User;
 import com.dailyfit.user.dao.UserDao;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 @Service
@@ -16,10 +17,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByEmail(String email) {
-
-        Optional<User> user = userDao.readUser(email);
-        return user.orElse(new User("Not Found", "Not Found", "Not Found"));
+    public Optional<User> getUserByEmail(String email) throws SQLException {
+        return userDao.readUser(email);
     }
 
     @Override

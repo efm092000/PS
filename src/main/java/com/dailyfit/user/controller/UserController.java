@@ -1,7 +1,8 @@
 package com.dailyfit.user.controller;
 
 import com.dailyfit.user.User;
+import org.springframework.http.ResponseEntity;
 
 public interface UserController {
-    User getUserByEmail(String email);
+    ResponseEntity<User> getUserByEmail(String email);
 }

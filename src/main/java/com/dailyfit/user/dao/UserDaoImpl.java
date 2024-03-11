@@ -24,14 +24,15 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Optional<User> readUser(String email) {
+    public Optional<User> readUser(String email) throws SQLException {
         try (ResultSet resultSet = queryUser(email)) {
             String password = resultSet.getString("password");
             String name = resultSet.getString("name");
-            return Optional.of(new User(email, password, name));
-        } catch (SQLException e) {
-            return Optional.empty();
+            if (password != null && name != null) {
+                return Optional.of(new User(email, password, name));
+            }
         }
+        return Optional.empty();
     }
 
     @Override
