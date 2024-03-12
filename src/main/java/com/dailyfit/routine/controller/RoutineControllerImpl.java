@@ -43,4 +43,18 @@ public class RoutineControllerImpl implements RoutineController{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @PutMapping(value = "/{rid}")
+    public ResponseEntity<Routine> updateRoutine(@PathVariable int rid,
+                                                 @RequestParam String name) {
+        Routine routine;
+
+        try {
+            routine = routineService.updateRoutine(rid, name);
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+        return ResponseEntity.ok(routine);
+    }
 }
