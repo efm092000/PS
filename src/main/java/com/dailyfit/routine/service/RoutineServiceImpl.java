@@ -35,7 +35,7 @@ public class RoutineServiceImpl implements RoutineService{
     }
 
     @Override
-    public void deleteRoutine(int rid) {
-
+    public void deleteRoutine(int rid) throws SQLException {
+        routineDao.deleteRoutine(rid);
     }
 }

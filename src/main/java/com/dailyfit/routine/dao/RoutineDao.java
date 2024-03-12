@@ -9,5 +9,5 @@ public interface RoutineDao {
     void createRoutine(Routine routine) throws SQLException;
     Optional<Routine> readRoutine(int rid) throws SQLException;
     void updateRoutine(Routine routine) throws SQLException;
-    void deleteRoutine(int rid);
+    void deleteRoutine(int rid) throws SQLException;
 }

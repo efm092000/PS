@@ -51,8 +51,14 @@ public class RoutineDaoImpl implements RoutineDao{
     }
 
     @Override
-    public void deleteRoutine(int rid) {
+    public void deleteRoutine(int rid) throws SQLException {
+        try (ResultSet resultSet = sqlQueryRoutine(rid)){
+            if (resultSet.next()) {
+                sqlDeleteRoutine(rid);
+            }
+        }
 
+        // TODO: Print error when routine doesn't exists
     }
 
     private ResultSet sqlQueryRoutine(int rid) throws SQLException {
@@ -65,5 +71,9 @@ public class RoutineDaoImpl implements RoutineDao{
 
     private void sqlUpdateRoutine(Routine routine) throws SQLException {
         connection.createStatement().execute(String.format("UPDATE routine SET name = '%s' WHERE rid = %d", routine.name(), routine.rid()));
+    }
+
+    private void sqlDeleteRoutine(int rid) throws SQLException {
+        connection.createStatement().execute(String.format("DELETE FROM routine WHERE rid = %d", rid));
     }
 }
