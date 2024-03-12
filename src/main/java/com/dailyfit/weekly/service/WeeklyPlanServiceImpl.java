@@ -1,0 +1,54 @@
+package com.dailyfit.weekly.service;
+
+import com.dailyfit.user.WeeklyPlan;
+import com.dailyfit.weekly.WeeklyPlan;
+import com.dailyfit.weekly.dao.WeeklyPlanDao;
+import org.springframework.stereotype.Service;
+
+import java.sql.SQLException;
+import java.util.Optional;
+
+@Service
+public class WeeklyPlanServiceImpl implements WeeklyPlanService {
+    private final WeeklyPlanDao weeklyPlanDao;
+
+    public WeeklyPlanServiceImpl(WeeklyPlanDao weeklyPlanDao) {
+        this.weeklyPlanDao = weeklyPlanDao;
+    }
+
+    @Override
+    public Optional<WeeklyPlan> getWeeklyPlanByWid(int wid) throws SQLException {
+        return weeklyPlanDao.readUser(wid);
+    }
+
+    @Override
+    public WeeklyPlan createWeeklyPlan(int wid, String name) throws SQLException {
+        /* TODO Check for existing user
+         * 1. Check if user exists
+         * 2. Check if password or name is null
+         */
+        WeeklyPlan weeklyPlan = new WeeklyPlan(wid,name);
+        weeklyPlanDao.createWeeklyPlan(weeklyPlan);
+        return weeklyPlan;
+    }
+
+    @Override
+    public WeeklyPlan updateWeeklyPlan(int wid, String name) throws SQLException {
+        /* TODO UserServiceImpl.updateUser
+         * 1. Check if user exists
+         * 2. Check if password or name is null
+         */
+        WeeklyPlan weeklyPlan = new WeeklyPlan(wid,name);
+        weeklyPlanDao.updateWeeklyPlan(weeklyPlan);
+        return weeklyPlan;
+    }
+
+    @Override
+    public void deleteWeeklyPlan(int wid) throws SQLException {
+        /* TODO UserServiceImpl.deleteUser
+         * 1. Check if user exists
+         */
+        weeklyPlanDao.deleteWeeklyPlan(wid);
+    }
+}
+
