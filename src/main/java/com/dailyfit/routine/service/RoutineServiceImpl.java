@@ -21,12 +21,14 @@ public class RoutineServiceImpl implements RoutineService{
     }
 
     @Override
-    public Routine createRoutine(Routine routine) {
-        return null;
+    public Routine createRoutine(int rid, String name) throws SQLException {
+        Routine routine = new Routine(rid, name);
+        routineDao.createRoutine(routine);
+        return routine;
     }
 
     @Override
-    public Routine updateRoutine(Routine routine) {
+    public Routine updateRoutine(int rid, String name) {
         return null;
     }
 

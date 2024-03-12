@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 public interface RoutineDao {
-    void createRoutine(Routine routine);
+    void createRoutine(Routine routine) throws SQLException;
     Optional<Routine> readRoutine(int rid) throws SQLException;
     void updateRoutine(int rid);
     void deleteRoutine(int rid);
