@@ -25,7 +25,7 @@ public class WeeklyPlanControllerImpl implements WeeklyPlanController {
                                            @RequestParam String name) {
         WeeklyPlan weeklyPlan;
         try {
-            weeklyPlan = WeeklyPlanService.createWeeklyPlan(wid, name);
+            weeklyPlan = weeklyPlanService.createWeeklyPlan(wid, name);
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -48,7 +48,7 @@ public class WeeklyPlanControllerImpl implements WeeklyPlanController {
         WeeklyPlan weeklyPlan;
         try {
             weeklyPlan = weeklyPlanService.updateWeeklyPlan(wid, name);
-            Optional<WeeklyPlan> optionalWeeklyPlan = weeklyPlanService.getWeekyPlanByWid(wid);
+            Optional<WeeklyPlan> optionalWeeklyPlan = weeklyPlanService.getWeeklyPlanByWid(wid);
             if (optionalWeeklyPlan.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
@@ -60,7 +60,7 @@ public class WeeklyPlanControllerImpl implements WeeklyPlanController {
 
 
     @DeleteMapping(value = "/{wid}")
-    public ResponseEntity<int> deleteWeeklyPlan(@PathVariable int wid) {
+    public ResponseEntity<String> deleteWeeklyPlan(@PathVariable int wid) {
         try {
             weeklyPlanService.deleteWeeklyPlan(wid);
         } catch (SQLException e) {

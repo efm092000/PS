@@ -1,6 +1,5 @@
 package com.dailyfit.weekly.service;
 
-import com.dailyfit.user.WeeklyPlan;
 import com.dailyfit.weekly.WeeklyPlan;
 import com.dailyfit.weekly.dao.WeeklyPlanDao;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,7 @@ public class WeeklyPlanServiceImpl implements WeeklyPlanService {
 
     @Override
     public Optional<WeeklyPlan> getWeeklyPlanByWid(int wid) throws SQLException {
-        return weeklyPlanDao.readUser(wid);
+        return weeklyPlanDao.readWeeklyPlan(wid);
     }
 
     @Override
