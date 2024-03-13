@@ -5,6 +5,7 @@ import com.dailyfit.routine.dao.RoutineDao;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,15 +22,15 @@ public class RoutineServiceImpl implements RoutineService{
     }
 
     @Override
-    public Routine createRoutine(int rid, String name) throws SQLException {
-        Routine routine = new Routine(rid, name);
+    public Routine createRoutine(int rid, String name, String email) throws SQLException {
+        Routine routine = new Routine(rid, name, email);
         routineDao.createRoutine(routine);
         return routine;
     }
 
     @Override
-    public Routine updateRoutine(int rid, String name) throws SQLException {
-        Routine routine = new Routine(rid, name);
+    public Routine updateRoutine(int rid, String name, String email) throws SQLException {
+        Routine routine = new Routine(rid, name, email);
         routineDao.updateRoutine(routine);
         return routine;
     }
@@ -37,5 +38,10 @@ public class RoutineServiceImpl implements RoutineService{
     @Override
     public void deleteRoutine(int rid) throws SQLException {
         routineDao.deleteRoutine(rid);
+    }
+
+    @Override
+    public List<Routine> getUserRoutines(String email) throws SQLException {
+        return routineDao.getUserRoutines(email);
     }
 }

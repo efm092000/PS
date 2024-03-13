@@ -9,10 +9,12 @@ import java.util.Objects;
 public class Routine {
     int rid;
     String name;
+    String email;
 
-    public Routine(int rid, String name) {
+    public Routine(int rid, String name, String email) {
         this.rid = rid;
         this.name = name;
+        this.email = email;
     }
 
     @Override
@@ -20,19 +22,21 @@ public class Routine {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Routine routine = (Routine) o;
-        return rid == routine.rid && Objects.equals(name, routine.name);
+        return rid == routine.rid && Objects.equals(name, routine.name) && Objects.equals(email, routine.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rid, name);
+        return Objects.hash(rid, name, email);
     }
 
     @Override
     public String toString() {
-        return "Routine:" +
-                "rid='" + rid + '\'' +
-                ", name=''" + name + '\'';
+        return "Routine{" +
+                "rid=" + rid +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 
     @JsonGetter("rid")
@@ -43,5 +47,10 @@ public class Routine {
     @JsonGetter("name")
     public String name() {
         return name;
+    }
+
+    @JsonGetter("email")
+    public String email() {
+        return email;
     }
 }
