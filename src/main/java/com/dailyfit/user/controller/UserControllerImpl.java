@@ -1,5 +1,7 @@
 package com.dailyfit.user.controller;
 
+import com.dailyfit.routine.service.RoutineService;
+import com.dailyfit.routine.Routine;
 import com.dailyfit.user.User;
 import com.dailyfit.user.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -8,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -15,9 +18,11 @@ import java.util.Optional;
 public class UserControllerImpl implements UserController {
 
     private final UserService userService;
+    private final RoutineService routineService;
 
-    public UserControllerImpl(UserService userService) {
+    public UserControllerImpl(UserService userService, RoutineService routineService) {
         this.userService = userService;
+        this.routineService = routineService;
     }
 
     @PostMapping(value = "/{email}")
@@ -69,5 +74,15 @@ public class UserControllerImpl implements UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
         return ResponseEntity.ok("User was deleted successfully");
+    }
+
+    @GetMapping(value = "/{email}/routines")
+    public ResponseEntity<List<Routine>> getUserRoutines(@PathVariable String email) {
+        try {
+            List<Routine> routines = routineService.getUserRoutines(email);
+            return ResponseEntity.ok(routines);
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }
