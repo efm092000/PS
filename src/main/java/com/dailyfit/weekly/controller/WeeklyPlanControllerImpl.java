@@ -22,10 +22,11 @@ public class WeeklyPlanControllerImpl implements WeeklyPlanController {
 
     @PostMapping(value = "/{wid}")
     public ResponseEntity<WeeklyPlan> createWeeklyPlan(@PathVariable int wid,
+                                           @RequestParam String email,
                                            @RequestParam String name) {
         WeeklyPlan weeklyPlan;
         try {
-            weeklyPlan = weeklyPlanService.createWeeklyPlan(wid, name);
+            weeklyPlan = weeklyPlanService.createWeeklyPlan(wid, name, email);
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -44,10 +45,11 @@ public class WeeklyPlanControllerImpl implements WeeklyPlanController {
 
     @PutMapping(value = "/{wid}")
     public ResponseEntity<WeeklyPlan> updateUser(@PathVariable int wid,
-                                           @RequestParam(required = false) String name) {
+                                           @RequestParam(required = false) String name,
+                                                 @RequestParam String email) {
         WeeklyPlan weeklyPlan;
         try {
-            weeklyPlan = weeklyPlanService.updateWeeklyPlan(wid, name);
+            weeklyPlan = weeklyPlanService.updateWeeklyPlan(wid, name,email);
             Optional<WeeklyPlan> optionalWeeklyPlan = weeklyPlanService.getWeeklyPlanByWid(wid);
             if (optionalWeeklyPlan.isEmpty()) {
                 return ResponseEntity.notFound().build();

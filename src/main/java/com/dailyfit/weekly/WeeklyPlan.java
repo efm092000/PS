@@ -9,9 +9,11 @@ import java.util.Objects;
 public class WeeklyPlan {
     private final int wid;
     private String name;
-    public WeeklyPlan(int wid, String name) {
+    private final String email;
+    public WeeklyPlan(int wid, String name, String email) {
         this.wid = wid;
         this.name = name;
+        this.email = email;
     }
 
     @Override
@@ -24,14 +26,15 @@ public class WeeklyPlan {
 
     @Override
     public int hashCode() {
-        return Objects.hash(wid,name);
+        return Objects.hash(wid,name, email);
     }
 
     @Override
     public String toString() {
         return "Weeklyplan:" +
                 "wID='" + wid + '\'' +
-                "name='" + name + "'";
+                "name='" + name + '\'' +
+                "email='" + email + "'";
     }
 
     @JsonGetter("wid")
@@ -42,6 +45,10 @@ public class WeeklyPlan {
     @JsonGetter("name")
     public String name() {
         return name;
+    }
+    @JsonGetter("email")
+    public String email() {
+        return email;
     }
     public void name(String name) {
         this.name = name;

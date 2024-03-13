@@ -34,7 +34,8 @@ public class WeeklyPlanDaoImpl implements WeeklyPlanDao {
         ResultSet resultSet = sqlQueryWeeklyPlan(wid);
         if (resultSet.next()) {
             String name = resultSet.getString("name");
-            return Optional.of(new WeeklyPlan(wid,name));
+            String email = resultSet.getString("email");
+            return Optional.of(new WeeklyPlan(wid,name,email));
         }
         resultSet.close();
         return Optional.empty();
@@ -68,7 +69,7 @@ public class WeeklyPlanDaoImpl implements WeeklyPlanDao {
     }
 
     private void sqlCreateWeeklyPlan(WeeklyPlan weeklyPlan) throws SQLException {
-        connection.createStatement().execute(String.format("INSERT INTO weeklyplans (wid, name) VALUES ('%s', '%s')", weeklyPlan.getWid(), weeklyPlan.name()));
+        connection.createStatement().execute(String.format("INSERT INTO weeklyplans (wid, name, email) VALUES ('%s', '%s','%s')", weeklyPlan.getWid(), weeklyPlan.name(), weeklyPlan.email()));
     }
 
     private void sqlDeleteWeeklyPlan(int wid) throws SQLException {
