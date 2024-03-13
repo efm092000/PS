@@ -24,7 +24,11 @@ public class ExerciseDaoImpl implements ExerciseDao {
     @Override
     public void createExercise(Exercise exercise) throws SQLException {
         connection.createStatement().execute(String.format("INSERT INTO A (name, muscleGroup, type, difficulty, material) VALUES ('%s','%s','%s','%s','%s')",
-                exercise.getName(),exercise.getMuscleGroup(), exercise.getType(), exercise.getDifficulty(), exercise.getMaterial()));
+                exercise.getName(),
+                exercise.getMuscleGroup(),
+                exercise.getType(),
+                exercise.getDifficulty(),
+                exercise.getMaterial()));
     }
 
     @Override
@@ -48,8 +52,14 @@ public class ExerciseDaoImpl implements ExerciseDao {
 
     @Override
     public void updateExercise(Exercise exercise) throws SQLException {
-        connection.createStatement().execute(String.format("UPDATE A SET muscleGroup='%s', type='%s', difficulty='%s', material='%s' WHERE name='%s'",
-                exercise.getMuscleGroup(), exercise.getType(), exercise.getDifficulty(), exercise.getMaterial(),exercise.getName()));
+        String query = "UPDATE A SET ";
+        if (!exercise.getMuscleGroup().equals("all")) query += String.format("muscleGroup='%s', ",exercise.getMuscleGroup());
+        if (!exercise.getMaterial().equals("all")) query += String.format("material='%s', ",exercise.getMaterial());
+        if (!exercise.getType().equals("all")) query += String.format("type='%s', ",exercise.getType());
+        if (!exercise.getDifficulty().equals("all")) query += String.format("difficulty='%s', ",exercise.getDifficulty());
+        query = query.substring(0,query.length()-2);
+        query += String.format("WHERE name='%s'", exercise.getName());
+        connection.createStatement().execute(query);
     }
 
     @Override
@@ -58,7 +68,7 @@ public class ExerciseDaoImpl implements ExerciseDao {
     }
 
     private ResultSet queryExercise(String name) throws SQLException {
-        return connection.createStatement().executeQuery(String.format("SELECT * FROM A"));
+        return connection.createStatement().executeQuery(String.format("SELECT * FROM A WHERE name='%s'", name));
     }
 
     public Optional<String> readExercises(String muscle, String type, String difficulty, String material) throws SQLException {
