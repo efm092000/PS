@@ -21,19 +21,16 @@ public class RoutineControllerImpl implements RoutineController{
     }
 
 
-    @PostMapping(value = "/{rid}")
-    public ResponseEntity<Routine> createRoutine(@PathVariable int rid,
-                                                 @RequestParam String name,
+    @PostMapping(value = "/{name}")
+    public ResponseEntity<String> createRoutine(@PathVariable String name,
                                                  @RequestParam String email) {
-        Routine routine;
-
         try {
-            routine = routineService.createRoutine(rid, name, email);
+            routineService.createRoutine(name, email);
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
 
-        return ResponseEntity.ok(routine);
+        return ResponseEntity.ok("Routine was created successfully");
     }
 
     @GetMapping(value = "/{rid}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,6 +76,6 @@ public class RoutineControllerImpl implements RoutineController{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
 
-        return ResponseEntity.ok("Routine was deleted succesfully.");
+        return ResponseEntity.ok("Routine was deleted successfully.");
     }
 }

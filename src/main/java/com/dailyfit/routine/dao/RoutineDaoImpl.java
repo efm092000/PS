@@ -21,14 +21,8 @@ public class RoutineDaoImpl implements RoutineDao{
     }
 
     @Override
-    public void createRoutine(Routine routine) throws SQLException {
-        try (ResultSet resultSet = sqlQueryRoutine(routine.rid())) {
-            if (!resultSet.next()) {
-                sqlCreateRoutine(routine);
-            }
-
-            // TODO: Print error when routine already exists
-        }
+    public void createRoutine(String name, String email) throws SQLException {
+        sqlCreateRoutine(name, email);
     }
 
     @Override
@@ -82,8 +76,8 @@ public class RoutineDaoImpl implements RoutineDao{
         return connection.createStatement().executeQuery(String.format("SELECT name, email FROM routine WHERE rid = %d", rid));
     }
 
-    private void sqlCreateRoutine(Routine routine) throws SQLException {
-        connection.createStatement().execute(String.format("INSERT INTO routine (rid, name, email) VALUES (%s, '%s', '%s')", routine.rid(), routine.name(), routine.email()));
+    private void sqlCreateRoutine(String name, String email) throws SQLException {
+        connection.createStatement().execute(String.format("INSERT INTO routine (name, email) VALUES ('%s', '%s')", name, email));
     }
 
     private void sqlUpdateRoutine(Routine routine) throws SQLException {

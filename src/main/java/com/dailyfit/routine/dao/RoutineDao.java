@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RoutineDao {
-    void createRoutine(Routine routine) throws SQLException;
+    void createRoutine(String name, String email) throws SQLException;
     Optional<Routine> readRoutine(int rid) throws SQLException;
     void updateRoutine(Routine routine) throws SQLException;
     void deleteRoutine(int rid) throws SQLException;
