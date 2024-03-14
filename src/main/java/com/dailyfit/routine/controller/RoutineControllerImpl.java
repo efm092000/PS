@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -22,11 +23,12 @@ public class RoutineControllerImpl implements RoutineController{
 
     @PostMapping(value = "/{rid}")
     public ResponseEntity<Routine> createRoutine(@PathVariable int rid,
-                                                 @RequestParam String name) {
+                                                 @RequestParam String name,
+                                                 @RequestParam String email) {
         Routine routine;
 
         try {
-            routine = routineService.createRoutine(rid, name);
+            routine = routineService.createRoutine(rid, name, email);
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -44,13 +46,24 @@ public class RoutineControllerImpl implements RoutineController{
         }
     }
 
+    @GetMapping(value = "/{email}/routines")
+    public ResponseEntity<List<Routine>> getUserRoutines(@PathVariable String email) {
+        try {
+            List<Routine> userRoutines = routineService.getUserRoutines(email);
+            return ResponseEntity.ok(userRoutines);
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @PutMapping(value = "/{rid}")
     public ResponseEntity<Routine> updateRoutine(@PathVariable int rid,
-                                                 @RequestParam String name) {
+                                                 @RequestParam String name,
+                                                 @RequestParam String email) {
         Routine routine;
 
         try {
-            routine = routineService.updateRoutine(rid, name);
+            routine = routineService.updateRoutine(rid, name, email);
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
