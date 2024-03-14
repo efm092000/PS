@@ -5,6 +5,7 @@ import com.dailyfit.exercise.dao.ExerciseDao;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,12 +18,12 @@ public class ExerciseServiceImpl implements ExerciseService {
     }
 
     @Override
-    public Optional<String> getExerciseByQuery(String name) throws SQLException {
+    public List<Exercise> getExerciseByQuery(String name) throws SQLException {
         return exerciseDao.readExercise(name);
     }
 
     @Override
-    public Optional<String> getExercisesByQuery(String muscleGroup, String type, String difficulty, String material) throws SQLException {
+    public List<Exercise> getExercisesByQuery(String muscleGroup, String type, Integer difficulty, Boolean material) throws SQLException {
         return exerciseDao.readExercises(muscleGroup, type, difficulty, material);
     }
 

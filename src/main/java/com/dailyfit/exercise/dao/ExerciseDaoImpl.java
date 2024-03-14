@@ -23,7 +23,7 @@ public class ExerciseDaoImpl implements ExerciseDao {
 
     @Override
     public void createExercise(Exercise exercise) throws SQLException {
-        connection.createStatement().execute(String.format("INSERT INTO A (name, muscleGroup, type, difficulty, material) VALUES ('%s','%s','%s','%s','%s')",
+        connection.createStatement().execute(String.format("INSERT INTO exercise (name, muscleGroup, type, difficulty, material) VALUES ('%s','%s','%s','%d','%b')",
                 exercise.getName(),
                 exercise.getMuscleGroup(),
                 exercise.getType(),
@@ -32,31 +32,25 @@ public class ExerciseDaoImpl implements ExerciseDao {
     }
 
     @Override
-    public Optional<String> readExercise(String name) throws SQLException {
+    public List<Exercise> readExercise(String name) throws SQLException {
         try (ResultSet resultSet = queryExercise(name)) {
+            if (!resultSet.next()) return new ArrayList<>();
             String muscleGroup = resultSet.getString("muscleGroup");
-            String ename = resultSet.getString("name");
-            String etype  = resultSet.getString("type");
-            String diff = resultSet.getString("difficulty");
-            String ematerial = resultSet.getString("material");
-
-            if (ename != null) {
-                return Optional.of(new ObjectMapper().writeValueAsString(new Exercise(ename, ematerial, muscleGroup, diff, etype)));
-            }
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            String type  = resultSet.getString("type");
+            int difficulty = resultSet.getInt("difficulty");
+            boolean material = resultSet.getBoolean("material");
+            return List.of(new Exercise(name, material, muscleGroup, difficulty, type));
         }
-        return Optional.empty();
     }
 
 
     @Override
     public void updateExercise(Exercise exercise) throws SQLException {
-        String query = "UPDATE A SET ";
-        if (!exercise.getMuscleGroup().equals("all")) query += String.format("muscleGroup='%s', ",exercise.getMuscleGroup());
-        if (!exercise.getMaterial().equals("all")) query += String.format("material='%s', ",exercise.getMaterial());
-        if (!exercise.getType().equals("all")) query += String.format("type='%s', ",exercise.getType());
-        if (!exercise.getDifficulty().equals("all")) query += String.format("difficulty='%s', ",exercise.getDifficulty());
+        String query = "UPDATE exercise SET ";
+        if (exercise.getMuscleGroup() != null) query += String.format("muscleGroup='%s', ",exercise.getMuscleGroup());
+        if (exercise.getMaterial() != null) query += String.format("material='%b', ",exercise.getMaterial());
+        if (exercise.getType() != null) query += String.format("type='%s', ",exercise.getType());
+        if (exercise.getDifficulty() != null) query += String.format("difficulty='%d', ",exercise.getDifficulty());
         query = query.substring(0,query.length()-2);
         query += String.format("WHERE name='%s'", exercise.getName());
         connection.createStatement().execute(query);
@@ -64,49 +58,38 @@ public class ExerciseDaoImpl implements ExerciseDao {
 
     @Override
     public void deleteExercise(String name) throws SQLException {
-        connection.createStatement().execute(String.format("DELETE FROM A where name='%s'", name));
+        connection.createStatement().execute(String.format("DELETE FROM exercise where name='%s'", name));
     }
 
     private ResultSet queryExercise(String name) throws SQLException {
-        return connection.createStatement().executeQuery(String.format("SELECT * FROM A WHERE name='%s'", name));
+        return connection.createStatement().executeQuery(String.format("SELECT * FROM exercise WHERE name='%s'", name));
     }
 
-    public Optional<String> readExercises(String muscle, String type, String difficulty, String material) throws SQLException {
+    public List<Exercise> readExercises(String muscle, String type, Integer difficulty, Boolean material) throws SQLException {
         try (ResultSet resultSet = queryExercises(muscle, type, difficulty, material)) {
-            List<String> exercises = new ArrayList<>();
+            List<Exercise> exercises = new ArrayList<>();
             while (resultSet.next()) {
-                String muscleGroup = resultSet.getString("muscleGroup");
-                String ename = resultSet.getString("name");
-                String etype = resultSet.getString("type");
-                String diff = resultSet.getString("difficulty");
-                String ematerial = resultSet.getString("material");
-
-                if (ename != null) {
-                    Exercise exercise = new Exercise(ename, ematerial, muscleGroup, diff, etype);
-                    exercises.add(new ObjectMapper().writeValueAsString(exercise));
+                String name = resultSet.getString("name");
+                if (name != null) {
+                    Exercise exercise = new Exercise(name,
+                            resultSet.getBoolean("material"),
+                            resultSet.getString("muscleGroup"),
+                            resultSet.getInt("difficulty"),
+                            resultSet.getString("type"));
+                    exercises.add(exercise);
                 }
             }
-
-            // Filtra ejercicios nulos y luego los une con ","
-            String jsonExercises = exercises.stream()
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.joining(","));
-
-            return Optional.of("[" + jsonExercises + "]");
+            return exercises;
         } catch (SQLException e) {
-            e.printStackTrace(); // Manejo apropiado del error
-            return Optional.empty();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace(); // Manejo apropiado del error
-            return Optional.empty();
+            return new ArrayList<>();
         }
     }
-    private ResultSet queryExercises(String muscle, String type, String difficulty, String material) throws SQLException {
-        String query = "SELECT * FROM A WHERE TRUE";
-        if (!muscle.equals("all")) query += String.format(" AND muscleGroup='%s'", muscle);
-        if (!type.equals("all")) query += String.format(" AND type='%s'", type);
-        if (!difficulty.equals("all")) query += String.format(" AND difficulty='%s'", difficulty);
-        if (!material.equals("all")) query += String.format(" AND material='%s'", material);
+    private ResultSet queryExercises(String muscle, String type, Integer difficulty, Boolean material) throws SQLException {
+        String query = "SELECT * FROM exercise WHERE TRUE";
+        if (muscle != null) query += String.format(" AND muscleGroup='%s'", muscle);
+        if (type != null) query += String.format(" AND type='%s'", type);
+        if (difficulty != null) query += String.format(" AND difficulty='%d'", difficulty);
+        if (material != null) query += String.format(" AND material='%b'", material);
 
         return connection.createStatement().executeQuery(query);
     }

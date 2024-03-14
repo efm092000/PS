@@ -20,19 +20,17 @@ public class ExerciseControllerImpl implements ExerciseController {
     }
 
     @GetMapping(value = "/api/exercise")
-    public ResponseEntity<String> getExercisesByQuery(
-            @RequestParam(defaultValue = "all") String muscleGroup,
-            @RequestParam(defaultValue = "all") String type,
-            @RequestParam(defaultValue = "all") String name,
-            @RequestParam(defaultValue = "all") String difficulty,
-            @RequestParam(defaultValue = "all") String material) {
+    public ResponseEntity<List<Exercise>> getExercisesByQuery(
+            @RequestParam(required = false) String muscleGroup,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer difficulty,
+            @RequestParam(required = false) Boolean material) {
         try {
-            if (!name.equals("all")) {
-                Optional<String> optionalExercise = exerciseService.getExerciseByQuery(name);
-                return optionalExercise.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            if (name != null) {
+                return ResponseEntity.ok(exerciseService.getExerciseByQuery(name));
             } else {
-                Optional<String> exercises = exerciseService.getExercisesByQuery(muscleGroup, type, difficulty, material);
-                return exercises.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+                return ResponseEntity.ok(exerciseService.getExercisesByQuery(muscleGroup, type, difficulty, material));
             }
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -40,16 +38,22 @@ public class ExerciseControllerImpl implements ExerciseController {
     }
 
     @DeleteMapping(value = "/api/exercise")
-    public void deleteExercise(@RequestParam(defaultValue = "all") String name) throws SQLException {
+    public void deleteExercise(@RequestParam(required = false) String name) throws SQLException {
+        if (name == null) return;
         exerciseService.deleteExercise(name);
     }
 
     @PostMapping(value = "/api/exercise")
-    public void addExercisesByQuery(@RequestParam(defaultValue = "all") String muscleGroup,
-                                    @RequestParam(defaultValue = "all") String type,
-                                    @RequestParam(defaultValue = "all") String name,
-                                    @RequestParam(defaultValue = "all") String difficulty,
-                                    @RequestParam(defaultValue = "all") String material) throws SQLException {
+    public void addExercisesByQuery(@RequestParam(required = false) String muscleGroup,
+                                    @RequestParam(required = false) String type,
+                                    @RequestParam(required = false) String name,
+                                    @RequestParam(required = false) Integer difficulty,
+                                    @RequestParam(required = false) Boolean material) throws SQLException {
+        if (name == null ||
+                type == null ||
+                muscleGroup == null ||
+                difficulty == null ||
+                material == null) return;
         exerciseService.createExercise(new Exercise(name,
                 material,
                 muscleGroup,
@@ -58,11 +62,12 @@ public class ExerciseControllerImpl implements ExerciseController {
     }
 
     @PutMapping(value = "/api/exercise")
-    public void updateExercisesByQuery(@RequestParam(defaultValue = "all") String muscleGroup,
-                                       @RequestParam(defaultValue = "all") String type,
-                                       @RequestParam(defaultValue = "all") String name,
-                                       @RequestParam(defaultValue = "all") String difficulty,
-                                       @RequestParam(defaultValue = "all") String material) throws SQLException {
+    public void updateExercisesByQuery(@RequestParam(required = false) String muscleGroup,
+                                       @RequestParam(required = false) String type,
+                                       @RequestParam(required = false) String name,
+                                       @RequestParam(required = false) Integer difficulty,
+                                       @RequestParam(required = false) Boolean material) throws SQLException {
+        if (name == null) return;
         exerciseService.updateExercise(new Exercise(name,
                 material,
                 muscleGroup,

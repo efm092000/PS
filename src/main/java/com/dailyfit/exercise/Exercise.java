@@ -9,12 +9,12 @@ import java.util.Objects;
 public class Exercise {
 
     private String name;
-    private String material;
+    private Boolean material;
     private String muscleGroup;
-    private String difficulty;
+    private Integer difficulty;
     private String type;
 
-    public Exercise(String name, String material, String muscleGroup, String difficulty, String type){
+    public Exercise(String name, Boolean material, String muscleGroup, Integer difficulty, String type){
         this.name = name;
         this.material = material;
         this.muscleGroup = muscleGroup;
@@ -27,7 +27,7 @@ public class Exercise {
         return name;
     }
     @JsonGetter("material")
-    public String getMaterial() {
+    public Boolean getMaterial() {
         return material;
     }
     @JsonGetter("muscleGroup")
@@ -36,7 +36,7 @@ public class Exercise {
     }
 
     @JsonGetter("difficulty")
-    public String getDifficulty() {
+    public Integer getDifficulty() {
         return difficulty;
     }
 
@@ -49,7 +49,7 @@ public class Exercise {
         this.name = name;
     }
 
-    public void setMaterial(String material) {
+    public void setMaterial(Boolean material) {
         this.material = material;
     }
 
@@ -57,7 +57,7 @@ public class Exercise {
         this.muscleGroup = muscleGroup;
     }
 
-    public void setDifficulty(String difficulty) {
+    public void setDifficulty(Integer difficulty) {
         this.difficulty = difficulty;
     }
 
