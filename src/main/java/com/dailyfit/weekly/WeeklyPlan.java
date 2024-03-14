@@ -7,11 +7,20 @@ import java.util.Objects;
 
 @JsonAutoDetect
 public class WeeklyPlan {
-    private final int wid;
+    private int wid;
     private String name;
-    public WeeklyPlan(int wid, String name) {
+    private final String email;
+
+    public WeeklyPlan(String name, String email) {
+        this.wid = 0;
+        this.name = name;
+        this.email = email;
+    }
+
+    public WeeklyPlan(int wid, String name, String email) {
         this.wid = wid;
         this.name = name;
+        this.email = email;
     }
 
     @Override
@@ -43,7 +52,17 @@ public class WeeklyPlan {
     public String name() {
         return name;
     }
+
+    @JsonGetter("email")
+    public String email() {
+        return email;
+    }
+
     public void name(String name) {
         this.name = name;
+    }
+
+    public void wid(int wid) {
+        this.wid = wid;
     }
 }

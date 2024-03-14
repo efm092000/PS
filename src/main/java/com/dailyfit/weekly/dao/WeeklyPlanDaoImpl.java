@@ -18,14 +18,14 @@ public class WeeklyPlanDaoImpl implements WeeklyPlanDao {
     }
 
     @Override
-    public void createWeeklyPlan(WeeklyPlan weeklyPlan) throws SQLException {
+    public int createWeeklyPlan(WeeklyPlan weeklyPlan) throws SQLException {
         try (ResultSet resultSet = sqlQueryWeeklyPlan(weeklyPlan.getWid())) {
             if (!resultSet.next()) {
-                sqlCreateWeeklyPlan(weeklyPlan);
-                return;
+                return sqlCreateWeeklyPlan(weeklyPlan).getInt(1);
             }
             System.err.println("WeeklyPlan exists");
             // Throw exception
+            return 0;
         }
     }
 
@@ -34,7 +34,8 @@ public class WeeklyPlanDaoImpl implements WeeklyPlanDao {
         ResultSet resultSet = sqlQueryWeeklyPlan(wid);
         if (resultSet.next()) {
             String name = resultSet.getString("name");
-            return Optional.of(new WeeklyPlan(wid,name));
+            String email = resultSet.getString("email");
+            return Optional.of(new WeeklyPlan(wid, name, email));
         }
         resultSet.close();
         return Optional.empty();
@@ -57,6 +58,7 @@ public class WeeklyPlanDaoImpl implements WeeklyPlanDao {
         try (ResultSet resultSet = sqlQueryWeeklyPlan(wid)) {
             if (resultSet.next()) {
                 sqlDeleteWeeklyPlan(wid);
+                return;
             }
             System.err.println("WeeklyPlan not found");
             // Throw exception
@@ -64,18 +66,18 @@ public class WeeklyPlanDaoImpl implements WeeklyPlanDao {
     }
 
     private ResultSet sqlQueryWeeklyPlan(int wid) throws SQLException {
-        return connection.createStatement().executeQuery(String.format("SELECT name FROM weeklyplans WHERE wid = '%s'", wid));
+        return connection.createStatement().executeQuery(String.format("SELECT * FROM weeklyPlan WHERE wid = '%s'", wid));
     }
 
-    private void sqlCreateWeeklyPlan(WeeklyPlan weeklyPlan) throws SQLException {
-        connection.createStatement().execute(String.format("INSERT INTO weeklyplans (wid, name) VALUES ('%s', '%s')", weeklyPlan.getWid(), weeklyPlan.name()));
+    private ResultSet sqlCreateWeeklyPlan(WeeklyPlan weeklyPlan) throws SQLException {
+        return connection.createStatement().executeQuery(String.format("INSERT INTO weeklyPlan (name, email) VALUES ('%s', '%s') RETURNING last_insert_rowid()", weeklyPlan.name(), weeklyPlan.email()));
     }
 
     private void sqlDeleteWeeklyPlan(int wid) throws SQLException {
-        connection.createStatement().execute(String.format("DELETE FROM weeklyplans WHERE wid = '%s'", wid));
+        connection.createStatement().execute(String.format("DELETE FROM weeklyPlan WHERE wid = '%s'", wid));
     }
 
     private void sqlUpdateWeeklyPlan(WeeklyPlan weeklyPlan) throws SQLException {
-        connection.createStatement().execute(String.format("UPDATE weeklyplans SET name = '%s' WHERE wid = '%s'", weeklyPlan.name(),weeklyPlan.getWid()));
+        connection.createStatement().execute(String.format("UPDATE weeklyPlan SET name = '%s' WHERE wid = '%s'", weeklyPlan.name(),weeklyPlan.getWid()));
     }
 }

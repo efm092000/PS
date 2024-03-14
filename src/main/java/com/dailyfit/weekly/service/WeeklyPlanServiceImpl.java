@@ -21,13 +21,14 @@ public class WeeklyPlanServiceImpl implements WeeklyPlanService {
     }
 
     @Override
-    public WeeklyPlan createWeeklyPlan(int wid, String name) throws SQLException {
+    public WeeklyPlan createWeeklyPlan(String name, String email) throws SQLException {
         /* TODO Check for existing user
          * 1. Check if user exists
          * 2. Check if password or name is null
          */
-        WeeklyPlan weeklyPlan = new WeeklyPlan(wid,name);
-        weeklyPlanDao.createWeeklyPlan(weeklyPlan);
+        WeeklyPlan weeklyPlan = new WeeklyPlan(name, email);
+        int wid = weeklyPlanDao.createWeeklyPlan(weeklyPlan);
+        weeklyPlan.wid(wid);
         return weeklyPlan;
     }
 
@@ -37,9 +38,9 @@ public class WeeklyPlanServiceImpl implements WeeklyPlanService {
          * 1. Check if user exists
          * 2. Check if password or name is null
          */
-        WeeklyPlan weeklyPlan = new WeeklyPlan(wid,name);
+        WeeklyPlan weeklyPlan = new WeeklyPlan(wid, name, "");
         weeklyPlanDao.updateWeeklyPlan(weeklyPlan);
-        return weeklyPlan;
+        return getWeeklyPlanByWid(wid).orElseThrow();
     }
 
     @Override

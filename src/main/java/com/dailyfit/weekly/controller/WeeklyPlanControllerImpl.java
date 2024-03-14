@@ -20,12 +20,12 @@ public class WeeklyPlanControllerImpl implements WeeklyPlanController {
         this.weeklyPlanService = weeklyPlanService;
     }
 
-    @PostMapping(value = "/{wid}")
-    public ResponseEntity<WeeklyPlan> createWeeklyPlan(@PathVariable int wid,
+    @PostMapping(value = "/{email}")
+    public ResponseEntity<WeeklyPlan> createWeeklyPlan(@PathVariable String email,
                                            @RequestParam String name) {
         WeeklyPlan weeklyPlan;
         try {
-            weeklyPlan = weeklyPlanService.createWeeklyPlan(wid, name);
+            weeklyPlan = weeklyPlanService.createWeeklyPlan(name, email);
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
