@@ -1,10 +1,12 @@
 package com.dailyfit.weekly.service;
 
 import com.dailyfit.weekly.WeeklyPlan;
+import com.dailyfit.weekly.WeeklyRoutineDTO;
 import com.dailyfit.weekly.dao.WeeklyPlanDao;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,6 +51,16 @@ public class WeeklyPlanServiceImpl implements WeeklyPlanService {
          * 1. Check if user exists
          */
         weeklyPlanDao.deleteWeeklyPlan(wid);
+    }
+
+    @Override
+    public List<WeeklyPlan> getUserWeeklyPlans(String email) throws SQLException {
+        return weeklyPlanDao.getWeeklyPlansByEmail(email);
+    }
+
+    @Override
+    public List<WeeklyRoutineDTO> getWeeklyPlanRoutines(int wid) throws SQLException {
+        return weeklyPlanDao.getWeeklyPlanRoutines(wid);
     }
 }
 

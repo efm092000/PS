@@ -1,6 +1,7 @@
 package com.dailyfit.weekly.controller;
 
 import com.dailyfit.weekly.WeeklyPlan;
+import com.dailyfit.weekly.WeeklyRoutineDTO;
 import com.dailyfit.weekly.service.WeeklyPlanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -68,4 +70,34 @@ public class WeeklyPlanControllerImpl implements WeeklyPlanController {
         }
         return ResponseEntity.ok("WeeklyPlan was deleted successfully");
     }
+
+    @GetMapping(value = "/{wid}/routines")
+    public ResponseEntity<List<WeeklyRoutineDTO>> getRoutinesByWid(@PathVariable int wid) {
+        try {
+            return ResponseEntity.ok(weeklyPlanService.getWeeklyPlanRoutines(wid));
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
+/*
+    [
+    {
+        "rid": 1,
+            "name": "rutina de pierna",
+            "day": "monday"
+    },
+    {
+        "rid": 2,
+            "name": "rutina2",
+            "day": "monday"
+    },
+    {
+        "rid": 4,
+            "name": "rutina4",
+            "day": "thursday"
+    }
+            ]
+*/
 }

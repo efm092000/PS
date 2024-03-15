@@ -1,12 +1,15 @@
 package com.dailyfit.weekly.dao;
 
 import com.dailyfit.weekly.WeeklyPlan;
+import com.dailyfit.weekly.WeeklyRoutineDTO;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -65,8 +68,44 @@ public class WeeklyPlanDaoImpl implements WeeklyPlanDao {
         }
     }
 
+    @Override
+    public List<WeeklyRoutineDTO> getWeeklyPlanRoutines(int wid) throws SQLException {
+        try (ResultSet resultSet = sqlQueryWeeklyPlanRoutines(wid)) {
+            List<WeeklyRoutineDTO> weeklyRoutineDTOList = new ArrayList<>();
+            while (resultSet.next()) {
+                int rid = resultSet.getInt("rid");
+                int day = resultSet.getInt("day");
+                double time = resultSet.getInt("time");
+                weeklyRoutineDTOList.add(new WeeklyRoutineDTO(rid, day, time));
+            }
+            System.out.println(weeklyRoutineDTOList);
+            return weeklyRoutineDTOList;
+        }
+    }
+
+    @Override
+    public List<WeeklyPlan> getWeeklyPlansByEmail(String email) throws SQLException {
+        try (ResultSet resultSet = sqlQueryWeeklyPlanByEmail(email)) {
+            List<WeeklyPlan> weeklyPlanList = new ArrayList<>();
+            while (resultSet.next()) {
+                int wid = resultSet.getInt("wid");
+                String name = resultSet.getString("name");
+                weeklyPlanList.add(new WeeklyPlan(wid, name, email));
+            }
+            return weeklyPlanList;
+        }
+    }
+
+    public ResultSet sqlQueryWeeklyPlanRoutines(int wid) throws SQLException {
+        return connection.createStatement().executeQuery(String.format("SELECT * FROM routine_weeklyPlan WHERE wid = '%s'", wid));
+    }
+
     private ResultSet sqlQueryWeeklyPlan(int wid) throws SQLException {
         return connection.createStatement().executeQuery(String.format("SELECT * FROM weeklyPlan WHERE wid = '%s'", wid));
+    }
+
+    private ResultSet sqlQueryWeeklyPlanByEmail(String email) throws SQLException {
+        return connection.createStatement().executeQuery(String.format("SELECT * FROM weeklyPlan WHERE email = '%s'", email));
     }
 
     private ResultSet sqlCreateWeeklyPlan(WeeklyPlan weeklyPlan) throws SQLException {
