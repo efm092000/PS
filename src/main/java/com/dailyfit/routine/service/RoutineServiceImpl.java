@@ -48,4 +48,9 @@ public class RoutineServiceImpl implements RoutineService{
     public List<RoutineExerciseDTO> getRoutineExercises(int rid) throws SQLException {
         return routineDao.getRoutineExercises(rid);
     }
+
+    @Override
+    public RoutineExerciseDTO addExerciseToRoutine(int rid, String name, int sets, int reps) throws SQLException {
+        return routineDao.addExerciseToRoutine(rid, name, sets, reps);
+    }
 }

@@ -34,6 +34,19 @@ public class RoutineControllerImpl implements RoutineController{
         return ResponseEntity.ok("Routine was created successfully");
     }
 
+    @PostMapping(value = "/{rid}/exercise")
+    public ResponseEntity<RoutineExerciseDTO> addExerciseToRoutine(@PathVariable int rid,
+                                                   @RequestParam String name,
+                                                   @RequestParam int sets,
+                                                   @RequestParam int reps
+    ) {
+        try {
+            return ResponseEntity.ok(routineService.addExerciseToRoutine(rid, name, sets, reps));
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @GetMapping(value = "/{rid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Routine> getRoutineByRid(@PathVariable int rid) {
         try {

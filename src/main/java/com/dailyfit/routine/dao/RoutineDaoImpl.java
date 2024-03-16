@@ -86,6 +86,12 @@ public class RoutineDaoImpl implements RoutineDao{
         }
     }
 
+    @Override
+    public RoutineExerciseDTO addExerciseToRoutine(int rid, String name, int sets, int reps) throws SQLException {
+        sqlAddExerciseToRoutine(rid, name, sets, reps);
+        return new RoutineExerciseDTO(rid, name, sets, reps);
+    }
+
     private ResultSet sqlQueryRoutine(int rid) throws SQLException {
         return connection.createStatement().executeQuery(String.format("SELECT name, email FROM routine WHERE rid = %d", rid));
     }
@@ -108,5 +114,9 @@ public class RoutineDaoImpl implements RoutineDao{
 
     private ResultSet sqlQueryRoutineExercises(int rid) throws SQLException {
         return connection.createStatement().executeQuery(String.format("SELECT * FROM exercise_routine WHERE rid = %d", rid));
+    }
+
+    private void sqlAddExerciseToRoutine(int rid, String name, int sets, int reps) throws SQLException {
+        connection.createStatement().execute(String.format("INSERT INTO exercise_routine (rid, name, sets, reps) VALUES (%d, '%s', %d, %d)", rid, name, sets, reps));
     }
 }
