@@ -4,6 +4,8 @@ import com.dailyfit.routine.service.RoutineService;
 import com.dailyfit.routine.Routine;
 import com.dailyfit.user.User;
 import com.dailyfit.user.service.UserService;
+import com.dailyfit.weekly.WeeklyPlan;
+import com.dailyfit.weekly.service.WeeklyPlanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +21,12 @@ public class UserControllerImpl implements UserController {
 
     private final UserService userService;
     private final RoutineService routineService;
+    private final WeeklyPlanService weeklyPlanService;
 
-    public UserControllerImpl(UserService userService, RoutineService routineService) {
+    public UserControllerImpl(UserService userService, RoutineService routineService, WeeklyPlanService weeklyPlanService) {
         this.userService = userService;
         this.routineService = routineService;
+        this.weeklyPlanService = weeklyPlanService;
     }
 
     @PostMapping(value = "/{email}")
@@ -81,6 +85,15 @@ public class UserControllerImpl implements UserController {
         try {
             List<Routine> routines = routineService.getUserRoutines(email);
             return ResponseEntity.ok(routines);
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping(value = "/{email}/weeklies")
+    public ResponseEntity<List<WeeklyPlan>> getUserWeeklyPlans(@PathVariable String email) {
+        try {
+            return ResponseEntity.ok(weeklyPlanService.getUserWeeklyPlans(email));
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }

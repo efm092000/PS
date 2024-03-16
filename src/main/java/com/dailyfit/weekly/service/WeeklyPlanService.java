@@ -14,4 +14,5 @@ public interface WeeklyPlanService {
     void deleteWeeklyPlan(int wid) throws SQLException;
     List<WeeklyPlan> getUserWeeklyPlans(String email) throws SQLException;
     List<WeeklyRoutineDTO> getWeeklyPlanRoutines(int wid) throws SQLException;
+    WeeklyRoutineDTO createWeeklyRoutine(int wid, int rid, int day) throws SQLException;
 }

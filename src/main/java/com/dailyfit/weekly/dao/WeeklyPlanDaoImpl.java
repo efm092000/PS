@@ -75,12 +75,16 @@ public class WeeklyPlanDaoImpl implements WeeklyPlanDao {
             while (resultSet.next()) {
                 int rid = resultSet.getInt("rid");
                 int day = resultSet.getInt("day");
-                double time = resultSet.getInt("time");
-                weeklyRoutineDTOList.add(new WeeklyRoutineDTO(rid, day, time));
+                weeklyRoutineDTOList.add(new WeeklyRoutineDTO(rid, day));
             }
-            System.out.println(weeklyRoutineDTOList);
             return weeklyRoutineDTOList;
         }
+    }
+
+    @Override
+    public WeeklyRoutineDTO createWeeklyRoutine(int wid, int rid, int day) throws SQLException {
+        sqlCreateWeeklyRoutine(wid, rid, day);
+        return new WeeklyRoutineDTO(rid, day);
     }
 
     @Override
@@ -94,6 +98,10 @@ public class WeeklyPlanDaoImpl implements WeeklyPlanDao {
             }
             return weeklyPlanList;
         }
+    }
+
+    private void sqlCreateWeeklyRoutine(int wid, int rid, int day) throws SQLException {
+        connection.createStatement().execute(String.format("INSERT INTO routine_weeklyPlan (wid, rid, day) VALUES ('%s', '%s', '%s')", wid, rid, day));
     }
 
     public ResultSet sqlQueryWeeklyPlanRoutines(int wid) throws SQLException {

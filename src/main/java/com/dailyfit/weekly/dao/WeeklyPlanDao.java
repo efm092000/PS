@@ -12,6 +12,7 @@ public interface WeeklyPlanDao {
     Optional<WeeklyPlan> readWeeklyPlan(int wid) throws SQLException;
     void updateWeeklyPlan(WeeklyPlan weeklyPlan) throws SQLException;
     void deleteWeeklyPlan(int wid) throws SQLException;
-    List<WeeklyRoutineDTO> getWeeklyPlanRoutines(int wid) throws SQLException;
     List<WeeklyPlan> getWeeklyPlansByEmail(String email) throws SQLException;
+    List<WeeklyRoutineDTO> getWeeklyPlanRoutines(int wid) throws SQLException;
+    WeeklyRoutineDTO createWeeklyRoutine(int wid, int rid, int day) throws SQLException;
 }

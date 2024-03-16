@@ -62,5 +62,10 @@ public class WeeklyPlanServiceImpl implements WeeklyPlanService {
     public List<WeeklyRoutineDTO> getWeeklyPlanRoutines(int wid) throws SQLException {
         return weeklyPlanDao.getWeeklyPlanRoutines(wid);
     }
+
+    @Override
+    public WeeklyRoutineDTO createWeeklyRoutine(int wid, int rid, int day) throws SQLException {
+        return weeklyPlanDao.createWeeklyRoutine(wid, rid, day);
+    }
 }
 

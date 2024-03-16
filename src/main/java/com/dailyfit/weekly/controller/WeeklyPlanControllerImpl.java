@@ -80,24 +80,16 @@ public class WeeklyPlanControllerImpl implements WeeklyPlanController {
         }
     }
 
-
-/*
-    [
-    {
-        "rid": 1,
-            "name": "rutina de pierna",
-            "day": "monday"
-    },
-    {
-        "rid": 2,
-            "name": "rutina2",
-            "day": "monday"
-    },
-    {
-        "rid": 4,
-            "name": "rutina4",
-            "day": "thursday"
+    @PostMapping(value = "/{wid}/routine")
+    public ResponseEntity<WeeklyRoutineDTO> createWeeklyRoutine(@PathVariable int wid,
+                                                               @RequestParam int rid,
+                                                               @RequestParam int day) {
+        WeeklyRoutineDTO weeklyRoutineDTO;
+        try {
+            weeklyRoutineDTO = weeklyPlanService.createWeeklyRoutine(wid, rid, day);
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        return ResponseEntity.ok(weeklyRoutineDTO);
     }
-            ]
-*/
 }
