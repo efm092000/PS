@@ -1,6 +1,7 @@
 package com.dailyfit.routine.dao;
 
 import com.dailyfit.routine.Routine;
+import com.dailyfit.routine.RoutineExerciseDTO;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -66,16 +67,29 @@ public class RoutineDaoImpl implements RoutineDao{
 
     @Override
     public List<Routine> getUserRoutines(String email) throws SQLException {
-        ResultSet resultSet = sqlQueryUserRoutines(email);
-        List<Routine> routines = new ArrayList<>();
-
-        while (resultSet.next()) {
-            int rid = resultSet.getInt("rid");
-            String name = resultSet.getString("name");
-            routines.add(new Routine(rid, name, email));
+        try (ResultSet resultSet = sqlQueryUserRoutines(email)) {
+            List<Routine> routines = new ArrayList<>();
+            while (resultSet.next()) {
+                int rid = resultSet.getInt("rid");
+                String name = resultSet.getString("name");
+                routines.add(new Routine(rid, name, email));
+            }
+            return routines;
         }
+    }
 
-        return routines;
+    @Override
+    public List<RoutineExerciseDTO> getRoutineExercises(int rid) throws SQLException {
+        try (ResultSet resultSet = sqlQueryRoutineExercises(rid)) {
+            List<RoutineExerciseDTO> routineExerciseDTOList = new ArrayList<>();
+            while (resultSet.next()) {
+                String exercise = resultSet.getString("name");
+                int sets = resultSet.getInt("sets");
+                int reps = resultSet.getInt("reps");
+                routineExerciseDTOList.add(new RoutineExerciseDTO(rid, exercise, sets, reps));
+            }
+            return routineExerciseDTOList;
+        }
     }
 
     private ResultSet sqlQueryRoutine(int rid) throws SQLException {
@@ -96,5 +110,9 @@ public class RoutineDaoImpl implements RoutineDao{
 
     private ResultSet sqlQueryUserRoutines(String email) throws SQLException {
         return connection.createStatement().executeQuery(String.format("SELECT rid, name FROM routine WHERE email = '%s'", email));
+    }
+
+    private ResultSet sqlQueryRoutineExercises(int rid) throws SQLException {
+        return connection.createStatement().executeQuery(String.format("SELECT * FROM exercise_routine WHERE rid = %d", rid));
     }
 }

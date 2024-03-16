@@ -1,6 +1,7 @@
 package com.dailyfit.routine.controller;
 
 import com.dailyfit.routine.Routine;
+import com.dailyfit.routine.RoutineExerciseDTO;
 import com.dailyfit.routine.service.RoutineService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,11 +47,11 @@ public class RoutineControllerImpl implements RoutineController{
         }
     }
 
-    @GetMapping(value = "/{email}/routines")
-    public ResponseEntity<List<Routine>> getUserRoutines(@PathVariable String email) {
+    @GetMapping(value = "/{rid}/exercises")
+    public ResponseEntity<List<RoutineExerciseDTO>> getExercisesByRid(@PathVariable int rid) {
         try {
-            List<Routine> userRoutines = routineService.getUserRoutines(email);
-            return ResponseEntity.ok(userRoutines);
+            List<RoutineExerciseDTO> routineExercises = routineService.getRoutineExercises(rid);
+            return ResponseEntity.ok(routineExercises);
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }

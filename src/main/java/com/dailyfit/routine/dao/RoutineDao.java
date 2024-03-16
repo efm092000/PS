@@ -1,6 +1,7 @@
 package com.dailyfit.routine.dao;
 
 import com.dailyfit.routine.Routine;
+import com.dailyfit.routine.RoutineExerciseDTO;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -13,4 +14,5 @@ public interface RoutineDao {
     void deleteRoutine(int rid) throws SQLException;
 
     List<Routine> getUserRoutines(String email) throws SQLException;
+    List<RoutineExerciseDTO> getRoutineExercises(int rid) throws SQLException;
 }
