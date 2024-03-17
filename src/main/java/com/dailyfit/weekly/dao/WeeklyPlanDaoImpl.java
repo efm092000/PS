@@ -22,9 +22,9 @@ public class WeeklyPlanDaoImpl implements WeeklyPlanDao {
 
     @Override
     public int createWeeklyPlan(WeeklyPlan weeklyPlan) throws SQLException {
-        try (ResultSet resultSet = sqlQueryWeeklyPlan(weeklyPlan.getWid())) {
-            if (!resultSet.next()) {
-                return sqlCreateWeeklyPlan(weeklyPlan).getInt(1);
+        try (ResultSet resultSet = sqlCreateWeeklyPlan(weeklyPlan)) {
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
             }
             System.err.println("WeeklyPlan exists");
             // Throw exception

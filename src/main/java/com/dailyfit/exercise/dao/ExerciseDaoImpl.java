@@ -1,8 +1,6 @@
 package com.dailyfit.exercise.dao;
 
 import com.dailyfit.exercise.Exercise;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +8,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class ExerciseDaoImpl implements ExerciseDao {
