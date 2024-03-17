@@ -23,15 +23,14 @@ public class RoutineControllerImpl implements RoutineController{
 
 
     @PostMapping(value = "/{name}")
-    public ResponseEntity<String> createRoutine(@PathVariable String name,
+    public ResponseEntity<Routine> createRoutine(@PathVariable String name,
                                                  @RequestParam String email) {
         try {
-            routineService.createRoutine(name, email);
+            Routine routine = routineService.createRoutine(name, email);
+            return ResponseEntity.ok(routine);
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-
-        return ResponseEntity.ok("Routine was created successfully");
     }
 
     @PostMapping(value = "/{rid}/exercise")

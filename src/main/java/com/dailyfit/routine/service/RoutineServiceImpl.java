@@ -23,8 +23,8 @@ public class RoutineServiceImpl implements RoutineService{
     }
 
     @Override
-    public void createRoutine(String name, String email) throws SQLException {
-        routineDao.createRoutine(name, email);
+    public Routine createRoutine(String name, String email) throws SQLException {
+        return routineDao.createRoutine(name, email);
     }
 
     @Override

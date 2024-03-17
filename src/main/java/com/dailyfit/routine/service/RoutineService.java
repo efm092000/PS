@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface RoutineService {
     Optional<Routine> getRoutineByRid(int rid) throws SQLException;
-    void createRoutine(String name, String email) throws SQLException;
+    Routine createRoutine(String name, String email) throws SQLException;
     Routine updateRoutine(int rid, String name, String email) throws SQLException;
     void deleteRoutine(int rid) throws SQLException;
     List<Routine> getUserRoutines(String email) throws SQLException;
