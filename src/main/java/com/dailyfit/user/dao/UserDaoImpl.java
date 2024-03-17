@@ -59,6 +59,7 @@ public class UserDaoImpl implements UserDao {
         try (ResultSet resultSet = sqlQueryUser(email)) {
             if (resultSet.next()) {
                 sqlDeleteUser(email);
+                return;
             }
             System.err.println("User not found");
             // Throw exception
@@ -66,18 +67,18 @@ public class UserDaoImpl implements UserDao {
     }
 
     private ResultSet sqlQueryUser(String email) throws SQLException {
-        return connection.createStatement().executeQuery(String.format("SELECT password, name FROM user WHERE email = '%s'", email));
+        return connection.createStatement().executeQuery(String.format("SELECT password, name FROM \"user\" WHERE email = '%s'", email));
     }
 
     private void sqlCreateUser(User user) throws SQLException {
-        connection.createStatement().execute(String.format("INSERT INTO user (email, password, name) VALUES ('%s', '%s', '%s')", user.email(), user.password(), user.name()));
+        connection.createStatement().execute(String.format("INSERT INTO \"user\" (email, password, name) VALUES ('%s', '%s', '%s')", user.email(), user.password(), user.name()));
     }
 
     private void sqlDeleteUser(String email) throws SQLException {
-        connection.createStatement().execute(String.format("DELETE FROM user WHERE email = '%s'", email));
+        connection.createStatement().execute(String.format("DELETE FROM \"user\" WHERE email = '%s'", email));
     }
 
     private void sqlUpdateUser(User user) throws SQLException {
-        connection.createStatement().execute(String.format("UPDATE user SET password = '%s', name = '%s' WHERE email = '%s'", user.password(), user.name(), user.email()));
+        connection.createStatement().execute(String.format("UPDATE \"user\" SET password = '%s', name = '%s' WHERE email = '%s'", user.password(), user.name(), user.email()));
     }
 }

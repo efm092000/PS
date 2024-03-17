@@ -1,6 +1,7 @@
 package com.dailyfit.routine.dao;
 
 import com.dailyfit.routine.Routine;
+import com.dailyfit.routine.RoutineExerciseDTO;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -60,16 +61,35 @@ public class RoutineDaoImpl implements RoutineDao{
 
     @Override
     public List<Routine> getUserRoutines(String email) throws SQLException {
-        ResultSet resultSet = sqlQueryUserRoutines(email);
-        List<Routine> routines = new ArrayList<>();
-
-        while (resultSet.next()) {
-            int rid = resultSet.getInt("rid");
-            String name = resultSet.getString("name");
-            routines.add(new Routine(rid, name, email));
+        try (ResultSet resultSet = sqlQueryUserRoutines(email)) {
+            List<Routine> routines = new ArrayList<>();
+            while (resultSet.next()) {
+                int rid = resultSet.getInt("rid");
+                String name = resultSet.getString("name");
+                routines.add(new Routine(rid, name, email));
+            }
+            return routines;
         }
+    }
 
-        return routines;
+    @Override
+    public List<RoutineExerciseDTO> getRoutineExercises(int rid) throws SQLException {
+        try (ResultSet resultSet = sqlQueryRoutineExercises(rid)) {
+            List<RoutineExerciseDTO> routineExerciseDTOList = new ArrayList<>();
+            while (resultSet.next()) {
+                String exercise = resultSet.getString("name");
+                int sets = resultSet.getInt("sets");
+                int reps = resultSet.getInt("reps");
+                routineExerciseDTOList.add(new RoutineExerciseDTO(rid, exercise, sets, reps));
+            }
+            return routineExerciseDTOList;
+        }
+    }
+
+    @Override
+    public RoutineExerciseDTO addExerciseToRoutine(int rid, String name, int sets, int reps) throws SQLException {
+        sqlAddExerciseToRoutine(rid, name, sets, reps);
+        return new RoutineExerciseDTO(rid, name, sets, reps);
     }
 
     private ResultSet sqlQueryRoutine(int rid) throws SQLException {
@@ -90,5 +110,13 @@ public class RoutineDaoImpl implements RoutineDao{
 
     private ResultSet sqlQueryUserRoutines(String email) throws SQLException {
         return connection.createStatement().executeQuery(String.format("SELECT rid, name FROM routine WHERE email = '%s'", email));
+    }
+
+    private ResultSet sqlQueryRoutineExercises(int rid) throws SQLException {
+        return connection.createStatement().executeQuery(String.format("SELECT * FROM exercise_routine WHERE rid = %d", rid));
+    }
+
+    private void sqlAddExerciseToRoutine(int rid, String name, int sets, int reps) throws SQLException {
+        connection.createStatement().execute(String.format("INSERT INTO exercise_routine (rid, name, sets, reps) VALUES (%d, '%s', %d, %d)", rid, name, sets, reps));
     }
 }

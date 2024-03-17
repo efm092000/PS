@@ -1,6 +1,7 @@
 package com.dailyfit.routine.controller;
 
 import com.dailyfit.routine.Routine;
+import com.dailyfit.routine.RoutineExerciseDTO;
 import com.dailyfit.routine.service.RoutineService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,6 +34,19 @@ public class RoutineControllerImpl implements RoutineController{
         return ResponseEntity.ok("Routine was created successfully");
     }
 
+    @PostMapping(value = "/{rid}/exercise")
+    public ResponseEntity<RoutineExerciseDTO> addExerciseToRoutine(@PathVariable int rid,
+                                                   @RequestParam String name,
+                                                   @RequestParam int sets,
+                                                   @RequestParam int reps
+    ) {
+        try {
+            return ResponseEntity.ok(routineService.addExerciseToRoutine(rid, name, sets, reps));
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @GetMapping(value = "/{rid}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Routine> getRoutineByRid(@PathVariable int rid) {
         try {
@@ -43,11 +57,11 @@ public class RoutineControllerImpl implements RoutineController{
         }
     }
 
-    @GetMapping(value = "/{email}/routines")
-    public ResponseEntity<List<Routine>> getUserRoutines(@PathVariable String email) {
+    @GetMapping(value = "/{rid}/exercises")
+    public ResponseEntity<List<RoutineExerciseDTO>> getExercisesByRid(@PathVariable int rid) {
         try {
-            List<Routine> userRoutines = routineService.getUserRoutines(email);
-            return ResponseEntity.ok(userRoutines);
+            List<RoutineExerciseDTO> routineExercises = routineService.getRoutineExercises(rid);
+            return ResponseEntity.ok(routineExercises);
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }

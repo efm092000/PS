@@ -1,6 +1,7 @@
 package com.dailyfit.routine.service;
 
 import com.dailyfit.routine.Routine;
+import com.dailyfit.routine.RoutineExerciseDTO;
 import com.dailyfit.routine.dao.RoutineDao;
 import org.springframework.stereotype.Service;
 
@@ -41,5 +42,15 @@ public class RoutineServiceImpl implements RoutineService{
     @Override
     public List<Routine> getUserRoutines(String email) throws SQLException {
         return routineDao.getUserRoutines(email);
+    }
+
+    @Override
+    public List<RoutineExerciseDTO> getRoutineExercises(int rid) throws SQLException {
+        return routineDao.getRoutineExercises(rid);
+    }
+
+    @Override
+    public RoutineExerciseDTO addExerciseToRoutine(int rid, String name, int sets, int reps) throws SQLException {
+        return routineDao.addExerciseToRoutine(rid, name, sets, reps);
     }
 }
