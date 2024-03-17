@@ -107,7 +107,7 @@ public class RoutineDaoImpl implements RoutineDao{
     }
 
     private void sqlUpdateRoutine(Routine routine) throws SQLException {
-        connection.createStatement().execute(String.format("UPDATE routine SET name = '%s', email = '%s' WHERE rid = %d", routine.name(), routine.email(), routine.rid()));
+        connection.createStatement().execute(String.format("UPDATE routine SET name = '%s' WHERE rid = %d", routine.name(), routine.rid()));
     }
 
     private void sqlDeleteRoutine(int rid) throws SQLException {

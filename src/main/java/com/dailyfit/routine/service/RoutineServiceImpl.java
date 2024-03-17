@@ -28,8 +28,8 @@ public class RoutineServiceImpl implements RoutineService{
     }
 
     @Override
-    public Routine updateRoutine(int rid, String name, String email) throws SQLException {
-        Routine routine = new Routine(rid, name, email);
+    public Routine updateRoutine(int rid, String name) throws SQLException {
+        Routine routine = new Routine(rid, name, "");
         routineDao.updateRoutine(routine);
         return routine;
     }

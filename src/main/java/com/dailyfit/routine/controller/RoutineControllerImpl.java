@@ -68,12 +68,11 @@ public class RoutineControllerImpl implements RoutineController{
 
     @PutMapping(value = "/{rid}")
     public ResponseEntity<Routine> updateRoutine(@PathVariable int rid,
-                                                 @RequestParam String name,
-                                                 @RequestParam String email) {
+                                                 @RequestParam String name) {
         Routine routine;
 
         try {
-            routine = routineService.updateRoutine(rid, name, email);
+            routine = routineService.updateRoutine(rid, name);
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
