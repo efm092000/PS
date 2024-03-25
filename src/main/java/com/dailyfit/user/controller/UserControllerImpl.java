@@ -3,6 +3,7 @@ package com.dailyfit.user.controller;
 import com.dailyfit.routine.service.RoutineService;
 import com.dailyfit.routine.Routine;
 import com.dailyfit.user.User;
+import com.dailyfit.user.exception.UserAlreadyExistsException;
 import com.dailyfit.user.service.UserService;
 import com.dailyfit.weekly.WeeklyPlan;
 import com.dailyfit.weekly.service.WeeklyPlanService;
@@ -30,16 +31,17 @@ public class UserControllerImpl implements UserController {
     }
 
     @PostMapping(value = "/{email}")
-    public ResponseEntity<User> createUser(@PathVariable String email,
+    public ResponseEntity<String> createUser(@PathVariable String email,
                                            @RequestParam String password,
                                            @RequestParam String name) {
-        User user;
         try {
-            user = userService.createUser(email, password, name);
+            userService.createUser(email, password, name);
         } catch (SQLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Connection error: database could not be reached");
+        } catch (UserAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok("User was created successfully");
     }
 
     @GetMapping(value = "/{email}", produces = MediaType.APPLICATION_JSON_VALUE)

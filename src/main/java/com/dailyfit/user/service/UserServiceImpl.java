@@ -2,6 +2,7 @@ package com.dailyfit.user.service;
 
 import com.dailyfit.user.User;
 import com.dailyfit.user.dao.UserDao;
+import com.dailyfit.user.exception.UserAlreadyExistsException;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -22,11 +23,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(String email, String password, String name) throws SQLException {
-        /* TODO Check for existing user
-        * 1. Check if user exists
-        * 2. Check if password or name is null
-         */
+    public User createUser(String email, String password, String name) throws SQLException, UserAlreadyExistsException {
+        Optional<User> userOptional = userDao.readUser(email);
+        if (userOptional.isPresent()) {
+            throw new UserAlreadyExistsException(email);
+        }
         User user = new User(email, password, name);
         userDao.createUser(user);
         return user;
