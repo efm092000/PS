@@ -6,6 +6,7 @@ import com.dailyfit.user.User;
 import com.dailyfit.user.UserDTO;
 import com.dailyfit.user.exception.InvalidCredentialsException;
 import com.dailyfit.user.exception.UserAlreadyExistsException;
+import com.dailyfit.user.exception.UserNotFoundException;
 import com.dailyfit.user.service.UserService;
 import com.dailyfit.weekly.service.WeeklyPlanService;
 import org.springframework.http.HttpStatus;
@@ -71,17 +72,17 @@ public class UserControllerImpl implements UserController {
     public ResponseEntity<?> updateUser(@PathVariable String email,
                                            @RequestParam(required = false) String password,
                                            @RequestParam(required = false) String name) {
-        User user;
         try {
-            user = userService.updateUser(email, password, name);
+            userService.updateUser(email, password, name);
             Optional<User> optionalUser = userService.getUserByEmail(email);
-            if (optionalUser.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
+            return ResponseEntity.ok(optionalUser);
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return ResponseEntity.ok(user);
     }
 
 
@@ -91,6 +92,8 @@ public class UserControllerImpl implements UserController {
             userService.deleteUser(email);
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
         return ResponseEntity.ok("User was deleted successfully");
     }

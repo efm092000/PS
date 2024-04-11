@@ -4,6 +4,7 @@ import com.dailyfit.user.User;
 import com.dailyfit.user.dao.UserDao;
 import com.dailyfit.user.exception.InvalidCredentialsException;
 import com.dailyfit.user.exception.UserAlreadyExistsException;
+import com.dailyfit.user.exception.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -35,21 +36,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(String email, String password, String name) throws SQLException {
-        /* TODO UserServiceImpl.updateUser
-        * 1. Check if user exists
-        * 2. Check if password or name is null
-         */
+    public User updateUser(String email, String password, String name) throws SQLException, UserNotFoundException {
+        if (password == null || name == null) {
+            throw new IllegalArgumentException("Password and name cannot be null");
+        }
+        if (userDao.readUser(email).isEmpty()) {
+            throw new UserNotFoundException(email);
+        }
         User user = new User(email, password, name);
         userDao.updateUser(user);
         return user;
     }
 
     @Override
-    public void deleteUser(String email) throws SQLException {
-        /* TODO UserServiceImpl.deleteUser
-        * 1. Check if user exists
-         */
+    public void deleteUser(String email) throws SQLException, UserNotFoundException {
+        Optional<User> user = userDao.readUser(email);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException(email);
+        }
         userDao.deleteUser(email);
     }
 

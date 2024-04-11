@@ -1,6 +1,8 @@
 package com.dailyfit.user.dao;
 
 import com.dailyfit.user.User;
+import com.dailyfit.user.exception.UserAlreadyExistsException;
+import com.dailyfit.user.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -19,14 +21,13 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void createUser(User user) throws SQLException {
+    public void createUser(User user) throws SQLException, UserAlreadyExistsException {
         try (ResultSet resultSet = sqlQueryUser(user.email())) {
             if (!resultSet.next()) {
                 sqlCreateUser(user);
                 return;
             }
-            System.err.println("User exists");
-            // Throw exception
+            throw new UserAlreadyExistsException(user.email());
         }
     }
 
@@ -43,26 +44,24 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void updateUser(User user) throws SQLException {
+    public void updateUser(User user) throws SQLException, UserNotFoundException {
         try (ResultSet resultSet = sqlQueryUser(user.email())) {
             if (resultSet.next()) {
                 sqlUpdateUser(user);
                 return;
             }
-            System.err.println("User not found");
-            // Throw exception
+            throw new UserNotFoundException(user.email());
         }
     }
 
     @Override
-    public void deleteUser(String email) throws SQLException {
+    public void deleteUser(String email) throws SQLException, UserNotFoundException {
         try (ResultSet resultSet = sqlQueryUser(email)) {
             if (resultSet.next()) {
                 sqlDeleteUser(email);
                 return;
             }
-            System.err.println("User not found");
-            // Throw exception
+            throw new UserNotFoundException(email);
         }
     }
 
