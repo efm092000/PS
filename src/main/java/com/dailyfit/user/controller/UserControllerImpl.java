@@ -4,9 +4,9 @@ import com.dailyfit.routine.service.RoutineService;
 import com.dailyfit.routine.Routine;
 import com.dailyfit.user.User;
 import com.dailyfit.user.UserDTO;
+import com.dailyfit.user.exception.InvalidCredentialsException;
 import com.dailyfit.user.exception.UserAlreadyExistsException;
 import com.dailyfit.user.service.UserService;
-import com.dailyfit.weekly.WeeklyPlan;
 import com.dailyfit.weekly.service.WeeklyPlanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,27 +46,29 @@ public class UserControllerImpl implements UserController {
     }
 
     @PostMapping(value = "/authenticate")
-    public ResponseEntity<UserDTO> authenticateUser(@RequestBody User user) {
+    public ResponseEntity<?> authenticateUser(@RequestBody User inputUser) {
         try {
-            Optional<User> optionalUser = userService.authenticateUser(user.email(), user.password());
-            return optionalUser.map(value -> ResponseEntity.ok(new UserDTO(value.email(), value.name()))).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null));
+            Optional<User> optionalUser = userService.authenticateUser(inputUser.email(), inputUser.password());
+            return optionalUser.map(user -> ResponseEntity.ok(new UserDTO(user.email(), user.name()))).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } catch (InvalidCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
     @GetMapping(value = "/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
         try {
             Optional<User> optionalUser = userService.getUserByEmail(email);
             return optionalUser.map(user -> ResponseEntity.ok(new UserDTO(user.email(), user.name()))).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (SQLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     @PutMapping(value = "/{email}")
-    public ResponseEntity<User> updateUser(@PathVariable String email,
+    public ResponseEntity<?> updateUser(@PathVariable String email,
                                            @RequestParam(required = false) String password,
                                            @RequestParam(required = false) String name) {
         User user;
@@ -77,7 +79,7 @@ public class UserControllerImpl implements UserController {
                 return ResponseEntity.notFound().build();
             }
         } catch (SQLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
         return ResponseEntity.ok(user);
     }
@@ -88,27 +90,27 @@ public class UserControllerImpl implements UserController {
         try {
             userService.deleteUser(email);
         } catch (SQLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
         return ResponseEntity.ok("User was deleted successfully");
     }
 
     @GetMapping(value = "/{email}/routines")
-    public ResponseEntity<List<Routine>> getUserRoutines(@PathVariable String email) {
+    public ResponseEntity<?> getUserRoutines(@PathVariable String email) {
         try {
             List<Routine> routines = routineService.getUserRoutines(email);
             return ResponseEntity.ok(routines);
         } catch (SQLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     @GetMapping(value = "/{email}/weeklies")
-    public ResponseEntity<List<WeeklyPlan>> getUserWeeklyPlans(@PathVariable String email) {
+    public ResponseEntity<?> getUserWeeklyPlans(@PathVariable String email) {
         try {
             return ResponseEntity.ok(weeklyPlanService.getUserWeeklyPlans(email));
         } catch (SQLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

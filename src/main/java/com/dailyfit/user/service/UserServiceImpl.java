@@ -2,6 +2,7 @@ package com.dailyfit.user.service;
 
 import com.dailyfit.user.User;
 import com.dailyfit.user.dao.UserDao;
+import com.dailyfit.user.exception.InvalidCredentialsException;
 import com.dailyfit.user.exception.UserAlreadyExistsException;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +54,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> authenticateUser(String email, String password) throws SQLException {
+    public Optional<User> authenticateUser(String email, String password) throws SQLException, InvalidCredentialsException {
         if (email == null || password == null) {
             return Optional.empty();
         }
@@ -63,6 +64,7 @@ public class UserServiceImpl implements UserService {
             if (user.password().equals(password)) {
                 return userOptional;
             }
+            throw new InvalidCredentialsException();
         }
         return Optional.empty();
     }

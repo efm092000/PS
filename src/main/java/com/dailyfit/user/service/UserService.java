@@ -1,6 +1,7 @@
 package com.dailyfit.user.service;
 
 import com.dailyfit.user.User;
+import com.dailyfit.user.exception.InvalidCredentialsException;
 import com.dailyfit.user.exception.UserAlreadyExistsException;
 
 import java.sql.SQLException;
@@ -11,5 +12,5 @@ public interface UserService {
     User createUser(String email, String password, String name) throws SQLException, UserAlreadyExistsException;
     User updateUser(String email, String password, String name) throws SQLException;
     void deleteUser(String email) throws SQLException;
-    Optional<User> authenticateUser(String email, String password) throws SQLException;
+    Optional<User> authenticateUser(String email, String password) throws SQLException, InvalidCredentialsException;
 }

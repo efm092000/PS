@@ -1,13 +1,11 @@
 package com.dailyfit.exercise.controller;
 
-import com.dailyfit.exercise.Exercise;
 import org.springframework.http.ResponseEntity;
 
 import java.sql.SQLException;
-import java.util.List;
 
 public interface ExerciseController {
-    ResponseEntity<List<Exercise>> getExercisesByQuery(String muscleGroup,
+    ResponseEntity<?> getExercisesByQuery(String muscleGroup,
                                                        String type,
                                                        String name,
                                                        Integer difficulty,

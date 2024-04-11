@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
-import java.util.List;
 
 @RestController
 public class ExerciseControllerImpl implements ExerciseController {
@@ -19,7 +18,7 @@ public class ExerciseControllerImpl implements ExerciseController {
     }
 
     @GetMapping(value = "/api/exercise")
-    public ResponseEntity<List<Exercise>> getExercisesByQuery(
+    public ResponseEntity<?> getExercisesByQuery(
             @RequestParam(required = false) String muscleGroup,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String name,
@@ -32,7 +31,7 @@ public class ExerciseControllerImpl implements ExerciseController {
                 return ResponseEntity.ok(exerciseService.getExercisesByQuery(muscleGroup, type, difficulty, material));
             }
         } catch (SQLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
