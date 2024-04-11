@@ -3,6 +3,7 @@ package com.dailyfit.user.controller;
 import com.dailyfit.routine.service.RoutineService;
 import com.dailyfit.routine.Routine;
 import com.dailyfit.user.User;
+import com.dailyfit.user.UserDTO;
 import com.dailyfit.user.exception.UserAlreadyExistsException;
 import com.dailyfit.user.service.UserService;
 import com.dailyfit.weekly.WeeklyPlan;
@@ -31,24 +32,34 @@ public class UserControllerImpl implements UserController {
     }
 
     @PostMapping(value = "/{email}")
-    public ResponseEntity<String> createUser(@PathVariable String email,
+    public ResponseEntity<?> createUser(@PathVariable String email,
                                            @RequestParam String password,
                                            @RequestParam String name) {
         try {
-            userService.createUser(email, password, name);
+            User user = userService.createUser(email, password, name);
+            return ResponseEntity.ok(new UserDTO(user.email(), user.name()));
         } catch (SQLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Connection error: database could not be reached");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         } catch (UserAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
-        return ResponseEntity.ok("User was created successfully");
+    }
+
+    @PostMapping(value = "/authenticate")
+    public ResponseEntity<UserDTO> authenticateUser(@RequestBody User user) {
+        try {
+            Optional<User> optionalUser = userService.authenticateUser(user.email(), user.password());
+            return optionalUser.map(value -> ResponseEntity.ok(new UserDTO(value.email(), value.name()))).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null));
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @GetMapping(value = "/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
         try {
             Optional<User> optionalUser = userService.getUserByEmail(email);
-            return optionalUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            return optionalUser.map(user -> ResponseEntity.ok(new UserDTO(user.email(), user.name()))).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }

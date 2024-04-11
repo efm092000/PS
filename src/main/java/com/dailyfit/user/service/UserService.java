@@ -11,4 +11,5 @@ public interface UserService {
     User createUser(String email, String password, String name) throws SQLException, UserAlreadyExistsException;
     User updateUser(String email, String password, String name) throws SQLException;
     void deleteUser(String email) throws SQLException;
+    Optional<User> authenticateUser(String email, String password) throws SQLException;
 }

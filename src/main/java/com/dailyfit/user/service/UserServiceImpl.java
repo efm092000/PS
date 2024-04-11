@@ -51,4 +51,19 @@ public class UserServiceImpl implements UserService {
          */
         userDao.deleteUser(email);
     }
+
+    @Override
+    public Optional<User> authenticateUser(String email, String password) throws SQLException {
+        if (email == null || password == null) {
+            return Optional.empty();
+        }
+        Optional<User> userOptional = userDao.readUser(email);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (user.password().equals(password)) {
+                return userOptional;
+            }
+        }
+        return Optional.empty();
+    }
 }
