@@ -4,7 +4,6 @@ import com.dailyfit.exercise.Exercise;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 public interface ExerciseService {
     List<Exercise> getExerciseByQuery(String name) throws SQLException;

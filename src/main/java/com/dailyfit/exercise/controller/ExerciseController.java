@@ -3,9 +3,7 @@ package com.dailyfit.exercise.controller;
 import com.dailyfit.exercise.Exercise;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 

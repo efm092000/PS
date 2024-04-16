@@ -40,31 +40,31 @@ public class ExerciseControllerImpl implements ExerciseController {
     }
 
     @DeleteMapping(value = "/api/exercise")
-    public void deleteExercise(@RequestParam(required = true) String name) throws SQLException {
+    public void deleteExercise(@RequestParam String name) throws SQLException {
         exerciseService.deleteExercise(name);
     }
 
     @PostMapping(value = "/api/exercise")
-    public void addExercisesByQuery(@RequestParam(required = true) String muscleGroup,
-                                    @RequestParam(required = true) String type,
-                                    @RequestParam(required = true) String name,
-                                    @RequestParam(required = true) Integer difficulty,
-                                    @RequestParam(required = true) Boolean material,
+    public void addExercisesByQuery(@RequestParam String muscleGroup,
+                                    @RequestParam String type,
+                                    @RequestParam String name,
+                                    @RequestParam Integer difficulty,
+                                    @RequestParam Boolean material,
                                     @RequestParam(required = false) String gif,
-                                    @RequestParam(required = true) String description) throws SQLException {
+                                    @RequestParam String description) throws SQLException {
         exerciseService.createExercise(new Exercise(name,
                 material,
                 muscleGroup,
                 difficulty,
                 type,
-                (gif == null)? "sample.jpg" : gif,
+                (gif == null)? "sample.gif" : gif,
                 description));
     }
 
     @PutMapping(value = "/api/exercise")
     public void updateExercisesByQuery(@RequestParam(required = false) String muscleGroup,
                                        @RequestParam(required = false) String type,
-                                       @RequestParam(required = true) String name,
+                                       @RequestParam String name,
                                        @RequestParam(required = false) Integer difficulty,
                                        @RequestParam(required = false) Boolean material,
                                        @RequestParam(required = false) String gif,
@@ -74,7 +74,7 @@ public class ExerciseControllerImpl implements ExerciseController {
                 muscleGroup,
                 difficulty,
                 type,
-                (gif == null)? "sample.jpg" : gif,
+                (gif == null)? "sample.gif" : gif,
                 description));
     }
 
