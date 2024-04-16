@@ -2,9 +2,12 @@ package com.dailyfit.exercise.controller;
 
 import com.dailyfit.exercise.Exercise;
 import com.dailyfit.exercise.service.ExerciseService;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -37,40 +40,49 @@ public class ExerciseControllerImpl implements ExerciseController {
     }
 
     @DeleteMapping(value = "/api/exercise")
-    public void deleteExercise(@RequestParam(required = false) String name) throws SQLException {
-        if (name == null) return;
+    public void deleteExercise(@RequestParam(required = true) String name) throws SQLException {
         exerciseService.deleteExercise(name);
     }
 
     @PostMapping(value = "/api/exercise")
-    public void addExercisesByQuery(@RequestParam(required = false) String muscleGroup,
-                                    @RequestParam(required = false) String type,
-                                    @RequestParam(required = false) String name,
-                                    @RequestParam(required = false) Integer difficulty,
-                                    @RequestParam(required = false) Boolean material) throws SQLException {
-        if (name == null ||
-                type == null ||
-                muscleGroup == null ||
-                difficulty == null ||
-                material == null) return;
+    public void addExercisesByQuery(@RequestParam(required = true) String muscleGroup,
+                                    @RequestParam(required = true) String type,
+                                    @RequestParam(required = true) String name,
+                                    @RequestParam(required = true) Integer difficulty,
+                                    @RequestParam(required = true) Boolean material,
+                                    @RequestParam(required = false) String gif,
+                                    @RequestParam(required = true) String description) throws SQLException {
         exerciseService.createExercise(new Exercise(name,
                 material,
                 muscleGroup,
                 difficulty,
-                type));
+                type,
+                (gif == null)? "sample.jpg" : gif,
+                description));
     }
 
     @PutMapping(value = "/api/exercise")
     public void updateExercisesByQuery(@RequestParam(required = false) String muscleGroup,
                                        @RequestParam(required = false) String type,
-                                       @RequestParam(required = false) String name,
+                                       @RequestParam(required = true) String name,
                                        @RequestParam(required = false) Integer difficulty,
-                                       @RequestParam(required = false) Boolean material) throws SQLException {
-        if (name == null) return;
+                                       @RequestParam(required = false) Boolean material,
+                                       @RequestParam(required = false) String gif,
+                                       @RequestParam(required = false) String description) throws SQLException {
         exerciseService.updateExercise(new Exercise(name,
                 material,
                 muscleGroup,
                 difficulty,
-                type));
+                type,
+                (gif == null)? "sample.jpg" : gif,
+                description));
+    }
+
+    @GetMapping("/api/exercise/image")
+    public ResponseEntity<Resource> getImage(@RequestParam(required = false) String imageName) {
+        Resource imageResource = new ClassPathResource("src/images" + imageName);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_GIF)
+                .body(imageResource);
     }
 }

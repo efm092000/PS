@@ -14,12 +14,18 @@ public class Exercise {
     private Integer difficulty;
     private String type;
 
-    public Exercise(String name, Boolean material, String muscleGroup, Integer difficulty, String type){
+    private String image;
+    private String gif;
+    private String description;
+
+    public Exercise(String name, Boolean material, String muscleGroup, Integer difficulty, String type, String gif, String description){
         this.name = name;
         this.material = material;
         this.muscleGroup = muscleGroup;
         this.difficulty = difficulty;
         this.type = type;
+        this.gif = gif;
+        this.description = description;
     }
 
     @JsonGetter("name")
@@ -44,6 +50,15 @@ public class Exercise {
     public String getType() {
         return type;
     }
+    @JsonGetter("gif")
+    public String getGif() {
+        return gif;
+    }
+    @JsonGetter("description")
+    public String getDescription() {
+        return description;
+    }
+
 
     public void setName(String name) {
         this.name = name;
@@ -64,6 +79,14 @@ public class Exercise {
     public void setType(String type) {
         this.type = type;
     }
+    public void setGif(String gif) {
+        this.gif = gif;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public boolean equals(Object o){
         if(this == o) return true;
@@ -74,7 +97,7 @@ public class Exercise {
 
     @Override
     public int hashCode(){
-        return Objects.hash(name,material,muscleGroup,difficulty,type);
+        return Objects.hash(name,material,muscleGroup,difficulty,type,gif,description);
     }
     @Override
     public String toString() {
@@ -83,6 +106,8 @@ public class Exercise {
                 ", material= " + material +
                 ", muscle group= " + muscleGroup +
                 ", difficulty= " + difficulty +
-                ", type= " + type + "'";
+                ", type= " + type +
+                ", gif= " + gif +
+                ", description= " + description + "'";
     }
 }

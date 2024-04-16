@@ -20,12 +20,14 @@ public class ExerciseDaoImpl implements ExerciseDao {
 
     @Override
     public void createExercise(Exercise exercise) throws SQLException {
-        connection.createStatement().execute(String.format("INSERT INTO exercise (name, muscleGroup, type, difficulty, material) VALUES ('%s','%s','%s','%d','%b')",
+        connection.createStatement().execute(String.format("INSERT INTO exercise (name, muscleGroup, type, difficulty, material, gif, description) VALUES ('%s','%s','%s','%d','%b','%s','%s')",
                 exercise.getName(),
                 exercise.getMuscleGroup(),
                 exercise.getType(),
                 exercise.getDifficulty(),
-                exercise.getMaterial()));
+                exercise.getMaterial(),
+                exercise.getGif(),
+                exercise.getDescription()));
     }
 
     @Override
@@ -34,9 +36,11 @@ public class ExerciseDaoImpl implements ExerciseDao {
             if (!resultSet.next()) return new ArrayList<>();
             String muscleGroup = resultSet.getString("muscleGroup");
             String type  = resultSet.getString("type");
+            String gif  = resultSet.getString("gif");
+            String description  = resultSet.getString("description");
             int difficulty = resultSet.getInt("difficulty");
             boolean material = resultSet.getBoolean("material");
-            return List.of(new Exercise(name, material, muscleGroup, difficulty, type));
+            return List.of(new Exercise(name, material, muscleGroup, difficulty, type, gif, description));
         }
     }
 
@@ -47,6 +51,8 @@ public class ExerciseDaoImpl implements ExerciseDao {
         if (exercise.getMuscleGroup() != null) query += String.format("muscleGroup='%s', ",exercise.getMuscleGroup());
         if (exercise.getMaterial() != null) query += String.format("material='%b', ",exercise.getMaterial());
         if (exercise.getType() != null) query += String.format("type='%s', ",exercise.getType());
+        if (exercise.getGif() != null) query += String.format("gif='%s', ",exercise.getGif());
+        if (exercise.getDescription() != null) query += String.format("description='%s', ",exercise.getDescription());
         if (exercise.getDifficulty() != null) query += String.format("difficulty='%d', ",exercise.getDifficulty());
         query = query.substring(0,query.length()-2);
         query += String.format("WHERE name='%s'", exercise.getName());
@@ -72,7 +78,9 @@ public class ExerciseDaoImpl implements ExerciseDao {
                             resultSet.getBoolean("material"),
                             resultSet.getString("muscleGroup"),
                             resultSet.getInt("difficulty"),
-                            resultSet.getString("type"));
+                            resultSet.getString("type"),
+                            resultSet.getString("gif"),
+                            resultSet.getString("description"));
                     exercises.add(exercise);
                 }
             }
