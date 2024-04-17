@@ -90,4 +90,18 @@ public class RoutineControllerImpl implements RoutineController{
 
         return ResponseEntity.ok("Routine was deleted successfully.");
     }
+
+    @DeleteMapping(value = "/{rid}/exercises")
+    public ResponseEntity<String> deleteExerciseFromRoutine(@PathVariable int rid,
+                                                            @RequestParam String name,
+                                                            @RequestParam int sets,
+                                                            @RequestParam int reps) {
+        try {
+            routineService.deleteExerciseFromRoutine(rid, name, sets, reps);
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+        return ResponseEntity.ok("Exercise was deleted from routine successfully");
+    }
 }

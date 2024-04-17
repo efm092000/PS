@@ -17,4 +17,5 @@ public interface RoutineDao {
     List<RoutineExerciseDTO> getRoutineExercises(int rid) throws SQLException;
 
     RoutineExerciseDTO addExerciseToRoutine(int rid, String name, int sets, int reps) throws SQLException;
+    void deleteExerciseFromRoutine(int rid, String name, int sets, int reps) throws SQLException;
 }

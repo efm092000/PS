@@ -98,6 +98,11 @@ public class RoutineDaoImpl implements RoutineDao{
         return new RoutineExerciseDTO(rid, name, sets, reps);
     }
 
+    @Override
+    public void deleteExerciseFromRoutine(int rid, String name, int sets, int reps) throws SQLException {
+        sqlDeleteExerciseFromRoutine(rid, name, sets, reps);
+    }
+
     private ResultSet sqlQueryRoutine(int rid) throws SQLException {
         return connection.createStatement().executeQuery(String.format("SELECT name, email FROM routine WHERE rid = %d", rid));
     }
@@ -124,5 +129,9 @@ public class RoutineDaoImpl implements RoutineDao{
 
     private void sqlAddExerciseToRoutine(int rid, String name, int sets, int reps) throws SQLException {
         connection.createStatement().execute(String.format("INSERT INTO exercise_routine (rid, name, sets, reps) VALUES (%d, '%s', %d, %d)", rid, name, sets, reps));
+    }
+
+    private void sqlDeleteExerciseFromRoutine(int rid, String name, int sets, int reps) throws SQLException {
+        connection.createStatement().execute(String.format("DELETE FROM exercise_routine WHERE rid = %d, name = '%s', sets = %d, reps = %d", rid, name, sets, reps));
     }
 }
