@@ -79,8 +79,8 @@ public class ExerciseControllerImpl implements ExerciseController {
     }
 
     @GetMapping("/api/exercise/image")
-    public ResponseEntity<Resource> getImage(@RequestParam(required = false) String imageName) {
-        Resource imageResource = new ClassPathResource("src/images" + imageName);
+    public ResponseEntity<Resource> getImage(@RequestParam(required = false) String gif) {
+        Resource imageResource = new ClassPathResource("images/" + gif);
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_GIF)
                 .body(imageResource);
