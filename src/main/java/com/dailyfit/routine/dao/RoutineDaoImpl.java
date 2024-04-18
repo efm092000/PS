@@ -132,6 +132,6 @@ public class RoutineDaoImpl implements RoutineDao{
     }
 
     private void sqlDeleteExerciseFromRoutine(int rid, String name, int sets, int reps) throws SQLException {
-        connection.createStatement().execute(String.format("DELETE FROM exercise_routine WHERE rid = %d, name = '%s', sets = %d, reps = %d", rid, name, sets, reps));
+        connection.createStatement().execute(String.format("DELETE FROM exercise_routine WHERE rid = %d AND name = '%s' AND sets = %d AND reps = %d", rid, name, sets, reps));
     }
 }
