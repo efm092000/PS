@@ -51,7 +51,7 @@ public class ProgressControllerImpl implements ProgressController {
         return ResponseEntity.ok(progressService.getDoneExerciseNamesOfUser(email));
     }
 
-    @GetMapping(value = "/api/progress/weekly/set")
+    @PostMapping(value = "/api/progress/weekly/set")
     public void setWeeklyToWeek(
             @RequestParam int wid,
             @RequestParam String email,
@@ -59,7 +59,7 @@ public class ProgressControllerImpl implements ProgressController {
         progressService.setWeeklyToWeek(wid, email, week);
     }
 
-    @GetMapping(value = "/api/progress/exercise/mark")
+    @PostMapping(value = "/api/progress/exercise/mark")
     public void markExerciseAsDone(
             @RequestParam String exerciseName,
             @RequestParam String email,

@@ -12,7 +12,7 @@ public class DataSourceConfig {
 
     @Bean
     public Connection dataBase() throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite:identifier.sqlite");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:test.sqlite");
         connection.createStatement().execute("PRAGMA foreign_keys = ON");
         return connection;
     }

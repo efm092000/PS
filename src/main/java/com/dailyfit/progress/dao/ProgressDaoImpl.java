@@ -87,7 +87,7 @@ public class ProgressDaoImpl implements ProgressDao {
         try {
             connection.createStatement().execute(
                     String.format(
-                            "INSERT INTO exercise (wid,week,email) VALUES (%d,'%s','%s')",
+                            "INSERT INTO weeklyToWeek (wid,week,email) VALUES (%d,'%s','%s')",
                     wid,
                     formatDay(week),
                     email));
