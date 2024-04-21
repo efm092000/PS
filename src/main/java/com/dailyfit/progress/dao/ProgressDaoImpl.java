@@ -127,7 +127,7 @@ public class ProgressDaoImpl implements ProgressDao {
     }
     private ResultSet getWeeklyByWeek(String email, Date week) throws SQLException {
         String query = String.format("SELECT * FROM weeklyToWeek WHERE email='%s'", email);
-        query += String.format(" AND day='%s'", formatDay(week));
+        query += String.format(" AND week='%s'", formatDay(week));
         return connection.createStatement().executeQuery(query);
     }
 }
