@@ -3,7 +3,6 @@ package com.dailyfit.exercise.controller;
 import com.dailyfit.exercise.BooleanFilter;
 import com.dailyfit.exercise.Exercise;
 import com.dailyfit.exercise.IntegerFilter;
-import com.dailyfit.exercise.StringFilter;
 import com.dailyfit.exercise.service.ExerciseService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
