@@ -1,6 +1,9 @@
 package com.dailyfit.exercise.controller;
 
+import com.dailyfit.exercise.BooleanFilter;
 import com.dailyfit.exercise.Exercise;
+import com.dailyfit.exercise.IntegerFilter;
+import com.dailyfit.exercise.StringFilter;
 import com.dailyfit.exercise.service.ExerciseService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
@@ -84,5 +87,42 @@ public class ExerciseControllerImpl implements ExerciseController {
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_GIF)
                 .body(imageResource);
+    }
+
+    @Override
+    public ResponseEntity<BooleanFilter[]> getMaterial() {
+        BooleanFilter[] filters = {new BooleanFilter("Material needed", true),
+                new BooleanFilter("Material not needed", false)};
+        return ResponseEntity.ok(filters);
+    }
+
+    @Override
+    public ResponseEntity<String[]> getMuscleGroup() {
+        String[] filters = {"Chest",
+                "Upper Arms",
+                "Thigh",
+                "Calf",
+                "Forearms",
+                "Shoulders",
+                "Hips",
+                "Back"};
+        return ResponseEntity.ok(filters);
+    }
+
+    @Override
+    public ResponseEntity<IntegerFilter[]> getDifficulty() {
+        IntegerFilter[] filters = {
+                new IntegerFilter("Easy", 1),
+                new IntegerFilter("Medium", 2),
+                new IntegerFilter("Hard", 3),
+                new IntegerFilter("Super hard", 4)};
+        return ResponseEntity.ok(filters);
+    }
+
+    @Override
+    public ResponseEntity<String[]> getType() {
+        String[] filters = {"Push",
+                "Pull"};
+        return ResponseEntity.ok(filters);
     }
 }
