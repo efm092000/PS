@@ -88,14 +88,14 @@ public class ExerciseControllerImpl implements ExerciseController {
                 .body(imageResource);
     }
 
-    @Override
+    @GetMapping("/api/exercise/filters/material")
     public ResponseEntity<BooleanFilter[]> getMaterial() {
         BooleanFilter[] filters = {new BooleanFilter("Material needed", true),
                 new BooleanFilter("Material not needed", false)};
         return ResponseEntity.ok(filters);
     }
 
-    @Override
+    @GetMapping("/api/exercise/filters/muscle")
     public ResponseEntity<String[]> getMuscleGroup() {
         String[] filters = {"Chest",
                 "Upper Arms",
@@ -108,7 +108,7 @@ public class ExerciseControllerImpl implements ExerciseController {
         return ResponseEntity.ok(filters);
     }
 
-    @Override
+    @GetMapping("/api/exercise/filters/difficulty")
     public ResponseEntity<IntegerFilter[]> getDifficulty() {
         IntegerFilter[] filters = {
                 new IntegerFilter("Easy", 1),
@@ -118,7 +118,7 @@ public class ExerciseControllerImpl implements ExerciseController {
         return ResponseEntity.ok(filters);
     }
 
-    @Override
+    @GetMapping("/api/exercise/filters/type")
     public ResponseEntity<String[]> getType() {
         String[] filters = {"Push",
                 "Pull"};
