@@ -35,13 +35,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(String email, String password, String name) throws SQLException {
-        /* TODO UserServiceImpl.updateUser
-        * 1. Check if user exists
-        * 2. Check if password or name is null
-         */
-        User user = new User(email, password, name);
-        userDao.updateUser(user);
-        return user;
+        Optional<User> user1 = userDao.readUser(email);
+        if (user1.isPresent()){
+            if(password == null){
+                userDao.updateName(email,name);
+            } else {
+                userDao.updatePassword(email,password);
+            }
+        }
+        return userDao.readUser(email).get();
     }
 
     @Override

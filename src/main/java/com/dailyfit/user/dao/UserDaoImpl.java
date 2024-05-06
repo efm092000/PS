@@ -66,6 +66,37 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+    @Override
+    public void updatePassword(String email, String password) throws SQLException {
+        try (ResultSet resultSet = sqlQueryUser(email)) {
+            if (resultSet.next()) {
+                sqlUpdatePassword(email,password);
+                return;
+            }
+            System.err.println("User not found");
+            // Throw exception
+        }
+    }
+    @Override
+    public void updateName(String email, String name) throws SQLException {
+        try (ResultSet resultSet = sqlQueryUser(email)) {
+            if (resultSet.next()) {
+                sqlUpdateName(email,name);
+                return;
+            }
+            System.err.println("User not found");
+            // Throw exception
+        }
+    }
+
+    private void sqlUpdateName(String email, String name) throws SQLException {
+        connection.createStatement().execute(String.format("UPDATE \"user\" SET name = '%s' WHERE email = '%s'", name, email));
+    }
+
+    private void sqlUpdatePassword(String email, String password) throws SQLException {
+        connection.createStatement().execute(String.format("UPDATE \"user\" SET password = '%s' WHERE email = '%s'", password, email));
+    }
+
     private ResultSet sqlQueryUser(String email) throws SQLException {
         return connection.createStatement().executeQuery(String.format("SELECT password, name FROM \"user\" WHERE email = '%s'", email));
     }
