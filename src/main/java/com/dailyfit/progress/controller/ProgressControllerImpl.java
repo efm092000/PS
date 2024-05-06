@@ -65,9 +65,11 @@ public class ProgressControllerImpl implements ProgressController {
             @RequestParam String email,
             @RequestParam Date date,
             @RequestParam int weight,
+            @RequestParam int sets,
+            @RequestParam int reps,
             @RequestParam int rid) throws SQLException {
         progressService.markExerciseAsDone(
-                new ExerciseDone(exerciseName,date,email,rid,weight)
+                new ExerciseDone(exerciseName,date,email,rid,weight,sets,reps)
         );
     }
 }

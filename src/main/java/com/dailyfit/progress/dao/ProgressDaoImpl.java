@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,23 +43,29 @@ public class ProgressDaoImpl implements ProgressDao {
     }
 
     private List<ExerciseDone> getDoneExercises(String email, Date day, String exerciseName) {
+        List<ExerciseDone> exercises = new ArrayList<>();
         try (ResultSet resultSet = queryDoneExercises(email, day, exerciseName)) {
-            List<ExerciseDone> exercises = new ArrayList<>();
             while (resultSet.next()) {
-                String name = resultSet.getString("name");
+                String name = resultSet.getString("exercise");
                 if (name != null) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
                     ExerciseDone exercise = new ExerciseDone(
                             resultSet.getString("exercise"),
-                            resultSet.getDate("day"),
+                            sdf.parse(resultSet.getString("day")),
                             resultSet.getString("email"),
                             resultSet.getInt("rid"),
-                            resultSet.getInt("weight"));
+                            resultSet.getInt("weight"),
+                            resultSet.getInt("sets"),
+                            resultSet.getInt("reps"));
                     exercises.add(exercise);
                 }
             }
             return exercises;
         } catch (SQLException e) {
-            return new ArrayList<>();
+            return exercises;
+        } catch (ParseException e) {
+            return exercises;
         }
     }
 
@@ -105,12 +112,14 @@ public class ProgressDaoImpl implements ProgressDao {
     @Override
     public void markExerciseAsDone(ExerciseDone exerciseDone) throws SQLException {
 
-        String query = String.format("INSERT INTO exercise_done (exercise, email, day, rid, weight) VALUES ('%s', '%s', '%s', %d, %d)",
+        String query = String.format("INSERT INTO exercise_done (exercise, email, day, rid, weight, sets, reps) VALUES ('%s', '%s', '%s', %d, %d, %d, %d)",
                 exerciseDone.exercise(),
                 exerciseDone.email(),
                 formatDay(exerciseDone.day()),
                 exerciseDone.rid(),
-                exerciseDone.weight());
+                exerciseDone.weight(),
+                exerciseDone.sets(),
+                exerciseDone.reps());
 
         connection.createStatement().execute(query);
 
@@ -122,7 +131,7 @@ public class ProgressDaoImpl implements ProgressDao {
         if (day != null){
             query += String.format(" AND day='%s'", formatDay(day));
         }
-        if (name != null) query += String.format(" AND name='%s'", name);
+        if (name != null) query += String.format(" AND exercise='%s'", name);
         return connection.createStatement().executeQuery(query);
     }
     private ResultSet getWeeklyByWeek(String email, Date week) throws SQLException {

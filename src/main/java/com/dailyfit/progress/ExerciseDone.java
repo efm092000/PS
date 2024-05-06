@@ -10,5 +10,7 @@ public record ExerciseDone(@JsonGetter("exercise") String exercise,
                            @JsonGetter("day") Date day,
                            @JsonGetter("email") String email,
                            @JsonGetter("rid") int rid,
-                           @JsonGetter("weight") int weight) {
+                           @JsonGetter("weight") int weight,
+                           @JsonGetter("sets") int sets,
+                           @JsonGetter("reps") int reps) {
 }

@@ -23,6 +23,8 @@ public interface ProgressController {
                             String email,
                             Date date,
                             int weight,
+                            int sets,
+                            int reps,
                             int rid) throws SQLException;
 
     ResponseEntity<List<String>> getDoneExerciseNamesOfUser(String email);
