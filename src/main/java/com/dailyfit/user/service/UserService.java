@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface UserService {
     Optional<User> getUserByEmail(String email) throws SQLException;
     User createUser(String email, String password, String name) throws SQLException, UserAlreadyExistsException;
-    User updateUser(String email, String password, String name) throws SQLException;
+    User updateUser(String email, String password, String name, boolean premium) throws SQLException;
     void deleteUser(String email) throws SQLException;
     Optional<User> authenticateUser(String email, String password) throws SQLException;
 }

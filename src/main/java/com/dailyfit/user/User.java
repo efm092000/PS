@@ -10,11 +10,13 @@ public class User {
     private final String email;
     private String name;
     private String password;
+    private boolean premium;
 
-    public User(String email, String password, String name) {
+    public User(String email, String password, String name, boolean premium) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.premium = premium;
     }
 
     @Override
@@ -60,4 +62,9 @@ public class User {
     public void name(String name) {
         this.name = name;
     }
+
+    @JsonGetter("isPremium")
+    public Boolean premium() { return premium; }
+
+    public void setPremium(boolean premium) { this.premium = premium; }
 }

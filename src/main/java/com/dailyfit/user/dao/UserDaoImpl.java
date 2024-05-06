@@ -36,7 +36,8 @@ public class UserDaoImpl implements UserDao {
         if (resultSet.next()) {
             String password = resultSet.getString("password");
             String name = resultSet.getString("name");
-            return Optional.of(new User(email, password, name));
+            boolean premium = resultSet.getBoolean("isPremium");
+            return Optional.of(new User(email, password, name, premium));
         }
         resultSet.close();
         return Optional.empty();
@@ -71,7 +72,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     private void sqlCreateUser(User user) throws SQLException {
-        connection.createStatement().execute(String.format("INSERT INTO \"user\" (email, password, name) VALUES ('%s', '%s', '%s')", user.email(), user.password(), user.name()));
+        connection.createStatement().execute(String.format("INSERT INTO \"user\" (email, password, name, isPremium) VALUES ('%s', '%s', '%s', '%b')", user.email(), user.password(), user.name(), false));
     }
 
     private void sqlDeleteUser(String email) throws SQLException {
@@ -79,6 +80,6 @@ public class UserDaoImpl implements UserDao {
     }
 
     private void sqlUpdateUser(User user) throws SQLException {
-        connection.createStatement().execute(String.format("UPDATE \"user\" SET password = '%s', name = '%s' WHERE email = '%s'", user.password(), user.name(), user.email()));
+        connection.createStatement().execute(String.format("UPDATE \"user\" SET password = '%s', name = '%s', isPremium = '%b' WHERE email = '%s'", user.password(), user.name(), user.email(), user.premium()));
     }
 }

@@ -68,10 +68,11 @@ public class UserControllerImpl implements UserController {
     @PutMapping(value = "/{email}")
     public ResponseEntity<User> updateUser(@PathVariable String email,
                                            @RequestParam(required = false) String password,
-                                           @RequestParam(required = false) String name) {
+                                           @RequestParam(required = false) String name,
+                                           @RequestParam(required = false) boolean premium) {
         User user;
         try {
-            user = userService.updateUser(email, password, name);
+            user = userService.updateUser(email, password, name, premium);
             Optional<User> optionalUser = userService.getUserByEmail(email);
             if (optionalUser.isEmpty()) {
                 return ResponseEntity.notFound().build();

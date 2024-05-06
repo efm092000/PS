@@ -28,18 +28,18 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             throw new UserAlreadyExistsException(email);
         }
-        User user = new User(email, password, name);
+        User user = new User(email, password, name, false);
         userDao.createUser(user);
         return user;
     }
 
     @Override
-    public User updateUser(String email, String password, String name) throws SQLException {
+    public User updateUser(String email, String password, String name, boolean premium) throws SQLException {
         /* TODO UserServiceImpl.updateUser
         * 1. Check if user exists
         * 2. Check if password or name is null
          */
-        User user = new User(email, password, name);
+        User user = new User(email, password, name, premium);
         userDao.updateUser(user);
         return user;
     }
