@@ -1,6 +1,8 @@
 package com.dailyfit.exercise.controller;
 
+import com.dailyfit.exercise.BooleanFilter;
 import com.dailyfit.exercise.Exercise;
+import com.dailyfit.exercise.IntegerFilter;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 
@@ -30,4 +32,9 @@ public interface ExerciseController {
                                 String description) throws SQLException;
 
     ResponseEntity<Resource> getImage(String imageName);
+
+    ResponseEntity<BooleanFilter[]> getMaterial();
+    ResponseEntity<String[]> getMuscleGroup();
+    ResponseEntity<IntegerFilter[]> getDifficulty();
+    ResponseEntity<String[]> getType();
 }
