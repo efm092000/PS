@@ -5,6 +5,7 @@ import com.dailyfit.progress.ExerciseDone;
 import com.dailyfit.weekly.WeeklyPlan;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -20,4 +21,6 @@ public interface ProgressService {
     void setWeeklyToWeek(int wid, String email, Date week);
 
     void markExerciseAsDone(ExerciseDone exerciseDone) throws SQLException;
+
+    List<ExerciseDone> getDoneExercisesByYearAndMonth(String email, String exerciseName, int year, int month) throws SQLException, ParseException;
 }
