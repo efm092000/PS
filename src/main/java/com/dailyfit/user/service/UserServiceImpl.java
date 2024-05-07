@@ -37,11 +37,17 @@ public class UserServiceImpl implements UserService {
     public User updateUser(String email, String password, String name, boolean premium) throws SQLException {
         Optional<User> user1 = userDao.readUser(email);
         if (user1.isPresent()){
-            if(password == null){
-                userDao.updateName(email,name,premium);
-            } else {
-                userDao.updatePassword(email,password, premium);
+            if(password == null && user1.get().premium() == premium){
+                userDao.updateName(email,name);
             }
+            if(name == null && user1.get().premium() == premium){
+                userDao.updatePassword(email,password);
+            }
+
+            if(password == null && name == null){
+                userDao.updatePremium(email,premium);
+            }
+
         }
         return userDao.readUser(email).get();
     }

@@ -29,7 +29,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, email, password);
+        return Objects.hash(name, email, password, premium);
     }
 
     @Override
@@ -37,6 +37,7 @@ public class User {
         return "User:" +
                 "name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", premium='" + premium + '\'' +
                 ", password='" + password + "'";
     }
 
@@ -64,7 +65,7 @@ public class User {
     }
 
     @JsonGetter("isPremium")
-    public Boolean premium() { return premium; }
+    public boolean premium() { return premium; }
 
     public void setPremium(boolean premium) { this.premium = premium; }
 }
