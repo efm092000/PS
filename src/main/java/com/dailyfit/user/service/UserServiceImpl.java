@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             throw new UserAlreadyExistsException(email);
         }
-        User user = new User(email, password, name, false);
+        User user = new User(email, password, name, false, false);
         userDao.createUser(user);
         return user;
     }
@@ -43,8 +43,7 @@ public class UserServiceImpl implements UserService {
             if(name == null && user1.get().premium() == premium){
                 userDao.updatePassword(email,password);
             }
-
-            if(password == null && name == null){
+            if(user1.get().premium() != premium){
                 userDao.updatePremium(email,premium);
             }
 

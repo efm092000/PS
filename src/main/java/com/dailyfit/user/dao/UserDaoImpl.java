@@ -36,9 +36,9 @@ public class UserDaoImpl implements UserDao {
         if (resultSet.next()) {
             String password = resultSet.getString("password");
             String name = resultSet.getString("name");
-            int premiumInteger = resultSet.getInt("isPremium");
-            boolean premium = premiumInteger == 1;
-            return Optional.of(new User(email, password, name, premium));
+            boolean premium = resultSet.getInt("isPremium") == 1;
+            boolean admin = resultSet.getInt("isAdmin") == 1;
+            return Optional.of(new User(email, password, name, premium, admin));
         }
         resultSet.close();
         return Optional.empty();
@@ -117,7 +117,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     private ResultSet sqlQueryUser(String email) throws SQLException {
-        return connection.createStatement().executeQuery(String.format("SELECT password, name, isPremium FROM \"user\" WHERE email = '%s'", email));
+        return connection.createStatement().executeQuery(String.format("SELECT password, name, isPremium, isAdmin FROM \"user\" WHERE email = '%s'", email));
     }
 
     private void sqlCreateUser(User user) throws SQLException {

@@ -12,11 +12,14 @@ public class User {
     private String password;
     private boolean premium;
 
-    public User(String email, String password, String name, boolean premium) {
+    private boolean admin;
+
+    public User(String email, String password, String name, boolean premium, boolean admin) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.premium = premium;
+        this.admin = admin;
     }
 
     @Override
@@ -68,4 +71,7 @@ public class User {
     public boolean premium() { return premium; }
 
     public void setPremium(boolean premium) { this.premium = premium; }
+
+    @JsonGetter("isAdmin")
+    public boolean admin() {return admin;}
 }
