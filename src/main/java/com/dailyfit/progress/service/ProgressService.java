@@ -1,12 +1,12 @@
 package com.dailyfit.progress.service;
 
-import com.dailyfit.exercise.Exercise;
 import com.dailyfit.progress.ExerciseDone;
-import com.dailyfit.weekly.WeeklyPlan;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public interface ProgressService {
     List<ExerciseDone> getDoneExercisesByUserAndDay(String email, Date day);
@@ -15,9 +15,11 @@ public interface ProgressService {
 
     List<ExerciseDone> getDoneExerciseOfUser(String email, String name);
 
-    List<String> getDoneExerciseNamesOfUser(String email);
+    Set<String> getDoneExerciseNamesOfUser(String email);
 
     void setWeeklyToWeek(int wid, String email, Date week);
 
     void markExerciseAsDone(ExerciseDone exerciseDone) throws SQLException;
+
+    List<ExerciseDone> getDoneExercisesByYearAndMonth(String email, String exerciseName, int year, int month) throws SQLException, ParseException;
 }

@@ -1,14 +1,14 @@
 package com.dailyfit.progress.service;
 
-import com.dailyfit.exercise.Exercise;
 import com.dailyfit.progress.ExerciseDone;
 import com.dailyfit.progress.dao.ProgressDao;
-import com.dailyfit.weekly.WeeklyPlan;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ProgressServiceImpl implements ProgressService {
@@ -35,7 +35,7 @@ public class ProgressServiceImpl implements ProgressService {
     }
 
     @Override
-    public List<String> getDoneExerciseNamesOfUser(String email) {
+    public Set<String> getDoneExerciseNamesOfUser(String email) {
         return progressDao.getDoneExerciseNamesOfUser(email);
     }
 
@@ -47,5 +47,13 @@ public class ProgressServiceImpl implements ProgressService {
     @Override
     public void markExerciseAsDone(ExerciseDone exerciseDone) throws SQLException {
         progressDao.markExerciseAsDone(exerciseDone);
+    }
+
+    @Override
+    public List<ExerciseDone> getDoneExercisesByYearAndMonth(String email, String exerciseName, int year, int month) throws SQLException, ParseException {
+        if (month == 0) {
+            return progressDao.getDoneExercisesByYear(email, exerciseName, year);
+        }
+        return progressDao.getDoneExercisesByYearAndMonth(email, exerciseName, year, month);
     }
 }

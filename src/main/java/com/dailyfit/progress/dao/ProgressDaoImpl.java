@@ -1,8 +1,6 @@
 package com.dailyfit.progress.dao;
 
-import com.dailyfit.exercise.Exercise;
 import com.dailyfit.progress.ExerciseDone;
-import com.dailyfit.weekly.WeeklyPlan;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -11,9 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class ProgressDaoImpl implements ProgressDao {
@@ -23,7 +19,6 @@ public class ProgressDaoImpl implements ProgressDao {
     public ProgressDaoImpl(@Qualifier("dataBase") Connection connection) {
         this.connection = connection;
     }
-
 
     @Override
     public Integer getWeeklyFromWeek(String email, Date week) {
@@ -74,18 +69,15 @@ public class ProgressDaoImpl implements ProgressDao {
         return getDoneExercises(email, null, name);    }
 
     @Override
-    public List<String> getDoneExerciseNamesOfUser(String email) {
+    public Set<String> getDoneExerciseNamesOfUser(String email) {
         try (ResultSet resultSet = queryDoneExercises(email, null, null)) {
-            List<String> exercises = new ArrayList<>();
+            Set<String> exercises = new HashSet<>();
             while (resultSet.next()) {
-                String name = resultSet.getString("name");
-                if (name != null) {
-                    exercises.add(resultSet.getString("exercise"));
-                }
+                exercises.add(resultSet.getString("exercise"));
             }
             return exercises;
         } catch (SQLException e) {
-            return new ArrayList<>();
+            return new HashSet<>();
         }
     }
 
@@ -125,18 +117,62 @@ public class ProgressDaoImpl implements ProgressDao {
 
     }
 
+    @Override
+    public List<ExerciseDone> getDoneExercisesByYearAndMonth(String email, String exerciseName, int year, int month) throws SQLException, ParseException {
+        try (ResultSet resultSet = queryExerciseByYearAndMonth(email, exerciseName, year, month)) {
+            return collectExercisesDone(resultSet);
+        }
+    }
+
+    @Override
+    public List<ExerciseDone> getDoneExercisesByYear(String email, String exerciseName, int year) {
+        try (ResultSet resultSet = queryExerciseByYear(email, exerciseName, year)){
+            return collectExercisesDone(resultSet);
+        } catch (SQLException | ParseException e) {
+            return new ArrayList<>();
+        }
+    }
+
+    private List<ExerciseDone> collectExercisesDone(ResultSet resultSet) throws SQLException, ParseException {
+        List<ExerciseDone> exercises = new ArrayList<>();
+        while (resultSet.next()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            ExerciseDone exercise = new ExerciseDone(
+                    resultSet.getString("exercise"),
+                    sdf.parse(resultSet.getString("day")),
+                    resultSet.getString("email"),
+                    resultSet.getInt("rid"),
+                    resultSet.getInt("weight"),
+                    resultSet.getInt("sets"),
+                    resultSet.getInt("reps"));
+            exercises.add(exercise);
+        }
+        return exercises;
+    }
 
     private ResultSet queryDoneExercises(String email, Date day, String name) throws SQLException {
-        String query = String.format("SELECT * FROM exercise_done WHERE email='%s'", email);
+        String query = String.format("SELECT DISTINCT * FROM exercise_done WHERE email='%s'", email);
         if (day != null){
             query += String.format(" AND day='%s'", formatDay(day));
         }
         if (name != null) query += String.format(" AND exercise='%s'", name);
         return connection.createStatement().executeQuery(query);
     }
+
     private ResultSet getWeeklyByWeek(String email, Date week) throws SQLException {
         String query = String.format("SELECT * FROM weeklyToWeek WHERE email='%s'", email);
         query += String.format(" AND week='%s'", formatDay(week));
+        return connection.createStatement().executeQuery(query);
+    }
+
+    private ResultSet queryExerciseByYear(String email, String exerciseName, int year) throws SQLException {
+        String query = String.format("SELECT * FROM exercise_done WHERE email='%s' AND exercise='%s' AND strftime('%%Y', day)='%s'", email, exerciseName, year);
+        return connection.createStatement().executeQuery(query);
+    }
+
+    private ResultSet queryExerciseByYearAndMonth(String email, String exerciseName, int year, int month) throws SQLException {
+        String monthString = String.format("%d-%02d", year, month);
+        String query = String.format("SELECT * FROM exercise_done WHERE email='%s' AND exercise='%s' AND strftime('%%Y-%%m', day)='%s'", email, exerciseName, monthString);
         return connection.createStatement().executeQuery(query);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public interface ProgressController {
     ResponseEntity<Integer> getWeeklyFromWeek(String email,
@@ -27,5 +28,5 @@ public interface ProgressController {
                             int reps,
                             int rid) throws SQLException;
 
-    ResponseEntity<List<String>> getDoneExerciseNamesOfUser(String email);
+    ResponseEntity<Set<String>> getDoneExerciseNamesOfUser(String email);
 }

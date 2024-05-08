@@ -12,8 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class ProgressControllerImpl implements ProgressController {
@@ -46,7 +48,7 @@ public class ProgressControllerImpl implements ProgressController {
     }
 
     @GetMapping(value = "/api/progress/get_done_exercises_names")
-    public ResponseEntity<List<String>> getDoneExerciseNamesOfUser(
+    public ResponseEntity<Set<String>> getDoneExerciseNamesOfUser(
             @RequestParam String email) {
         return ResponseEntity.ok(progressService.getDoneExerciseNamesOfUser(email));
     }
@@ -71,5 +73,19 @@ public class ProgressControllerImpl implements ProgressController {
         progressService.markExerciseAsDone(
                 new ExerciseDone(exerciseName,date,email,rid,weight,sets,reps)
         );
+    }
+
+    @GetMapping(value = "/api/progress/done_exercises")
+    public ResponseEntity<List<ExerciseDone>> getDoneExercisesByYearAndMonth(
+            @RequestParam String email,
+            @RequestParam String exerciseName,
+            @RequestParam int year,
+            @RequestParam int month) {
+        try {
+            return ResponseEntity.ok(progressService.getDoneExercisesByYearAndMonth(email, exerciseName, year, month));
+        } catch (ParseException | SQLException e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
