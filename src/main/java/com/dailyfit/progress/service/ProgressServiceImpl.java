@@ -51,6 +51,9 @@ public class ProgressServiceImpl implements ProgressService {
 
     @Override
     public List<ExerciseDone> getDoneExercisesByYearAndMonth(String email, String exerciseName, int year, int month) throws SQLException, ParseException {
+        if (month == 0) {
+            return progressDao.getDoneExercisesByYear(email, exerciseName, year);
+        }
         return progressDao.getDoneExercisesByYearAndMonth(email, exerciseName, year, month);
     }
 }

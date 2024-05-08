@@ -22,4 +22,6 @@ public interface ProgressDao {
     void markExerciseAsDone(ExerciseDone exerciseDone) throws SQLException;
 
     List<ExerciseDone> getDoneExercisesByYearAndMonth(String email, String exerciseName, int year, int month) throws SQLException, ParseException;
+
+    List<ExerciseDone> getDoneExercisesByYear(String email, String exerciseName, int year);
 }

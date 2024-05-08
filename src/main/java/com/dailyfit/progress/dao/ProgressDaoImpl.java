@@ -119,7 +119,21 @@ public class ProgressDaoImpl implements ProgressDao {
 
     @Override
     public List<ExerciseDone> getDoneExercisesByYearAndMonth(String email, String exerciseName, int year, int month) throws SQLException, ParseException {
-        ResultSet resultSet = queryExerciseByYearAndMonth(email, exerciseName, year, month);
+        try (ResultSet resultSet = queryExerciseByYearAndMonth(email, exerciseName, year, month)) {
+            return collectExercisesDone(resultSet);
+        }
+    }
+
+    @Override
+    public List<ExerciseDone> getDoneExercisesByYear(String email, String exerciseName, int year) {
+        try (ResultSet resultSet = queryExerciseByYear(email, exerciseName, year)){
+            return collectExercisesDone(resultSet);
+        } catch (SQLException | ParseException e) {
+            return new ArrayList<>();
+        }
+    }
+
+    private List<ExerciseDone> collectExercisesDone(ResultSet resultSet) throws SQLException, ParseException {
         List<ExerciseDone> exercises = new ArrayList<>();
         while (resultSet.next()) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -148,6 +162,11 @@ public class ProgressDaoImpl implements ProgressDao {
     private ResultSet getWeeklyByWeek(String email, Date week) throws SQLException {
         String query = String.format("SELECT * FROM weeklyToWeek WHERE email='%s'", email);
         query += String.format(" AND week='%s'", formatDay(week));
+        return connection.createStatement().executeQuery(query);
+    }
+
+    private ResultSet queryExerciseByYear(String email, String exerciseName, int year) throws SQLException {
+        String query = String.format("SELECT * FROM exercise_done WHERE email='%s' AND exercise='%s' AND strftime('%%Y', day)='%s'", email, exerciseName, year);
         return connection.createStatement().executeQuery(query);
     }
 
