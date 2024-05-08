@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class ProgressControllerImpl implements ProgressController {
@@ -47,7 +48,7 @@ public class ProgressControllerImpl implements ProgressController {
     }
 
     @GetMapping(value = "/api/progress/get_done_exercises_names")
-    public ResponseEntity<List<String>> getDoneExerciseNamesOfUser(
+    public ResponseEntity<Set<String>> getDoneExerciseNamesOfUser(
             @RequestParam String email) {
         return ResponseEntity.ok(progressService.getDoneExerciseNamesOfUser(email));
     }

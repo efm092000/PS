@@ -9,9 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class ProgressDaoImpl implements ProgressDao {
@@ -71,15 +69,15 @@ public class ProgressDaoImpl implements ProgressDao {
         return getDoneExercises(email, null, name);    }
 
     @Override
-    public List<String> getDoneExerciseNamesOfUser(String email) {
+    public Set<String> getDoneExerciseNamesOfUser(String email) {
         try (ResultSet resultSet = queryDoneExercises(email, null, null)) {
-            List<String> exercises = new ArrayList<>();
+            Set<String> exercises = new HashSet<>();
             while (resultSet.next()) {
                 exercises.add(resultSet.getString("exercise"));
             }
             return exercises;
         } catch (SQLException e) {
-            return new ArrayList<>();
+            return new HashSet<>();
         }
     }
 
@@ -139,7 +137,7 @@ public class ProgressDaoImpl implements ProgressDao {
     }
 
     private ResultSet queryDoneExercises(String email, Date day, String name) throws SQLException {
-        String query = String.format("SELECT DISTINCT exercise FROM exercise_done WHERE email='%s'", email);
+        String query = String.format("SELECT DISTINCT * FROM exercise_done WHERE email='%s'", email);
         if (day != null){
             query += String.format(" AND day='%s'", formatDay(day));
         }

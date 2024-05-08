@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ProgressServiceImpl implements ProgressService {
@@ -34,7 +35,7 @@ public class ProgressServiceImpl implements ProgressService {
     }
 
     @Override
-    public List<String> getDoneExerciseNamesOfUser(String email) {
+    public Set<String> getDoneExerciseNamesOfUser(String email) {
         return progressDao.getDoneExerciseNamesOfUser(email);
     }
 
