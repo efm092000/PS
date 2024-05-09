@@ -1,13 +1,9 @@
 package com.dailyfit.progress.controller;
 
-import com.dailyfit.exercise.Exercise;
 import com.dailyfit.progress.ExerciseDone;
+import com.dailyfit.progress.ProgressRecommendationDTO;
 import com.dailyfit.progress.service.ProgressService;
-import com.dailyfit.weekly.WeeklyPlan;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
+@RequestMapping("/api/progress")
 public class ProgressControllerImpl implements ProgressController {
 
     private final ProgressService progressService;
@@ -26,34 +23,34 @@ public class ProgressControllerImpl implements ProgressController {
         this.progressService = progressService;
     }
 
-    @GetMapping(value = "/api/progress/weekly/get")
+    @GetMapping(value = "/weekly/get")
     public ResponseEntity<Integer> getWeeklyFromWeek(
             @RequestParam String email,
             @RequestParam Date week) {
         return ResponseEntity.ok(progressService.getWeeklyFromWeek(email, week));
     }
 
-    @GetMapping(value = "/api/progress/get_exercises_of_day")
+    @GetMapping(value = "/get_exercises_of_day")
     public ResponseEntity<List<ExerciseDone>> getDoneExercisesByUserAndDay(
             @RequestParam String email,
             @RequestParam Date day) {
         return ResponseEntity.ok(progressService.getDoneExercisesByUserAndDay(email, day));
     }
 
-    @GetMapping(value = "/api/progress/get_done_exercises")
+    @GetMapping(value = "/get_done_exercises")
     public ResponseEntity<List<ExerciseDone>> getDoneExerciseOfUser(
             @RequestParam String email,
             @RequestParam String name) {
         return ResponseEntity.ok(progressService.getDoneExerciseOfUser(email, name));
     }
 
-    @GetMapping(value = "/api/progress/get_done_exercises_names")
+    @GetMapping(value = "/get_done_exercises_names")
     public ResponseEntity<Set<String>> getDoneExerciseNamesOfUser(
             @RequestParam String email) {
         return ResponseEntity.ok(progressService.getDoneExerciseNamesOfUser(email));
     }
 
-    @PostMapping(value = "/api/progress/weekly/set")
+    @PostMapping(value = "/weekly/set")
     public void setWeeklyToWeek(
             @RequestParam int wid,
             @RequestParam String email,
@@ -61,7 +58,7 @@ public class ProgressControllerImpl implements ProgressController {
         progressService.setWeeklyToWeek(wid, email, week);
     }
 
-    @PostMapping(value = "/api/progress/exercise/mark")
+    @PostMapping(value = "/exercise/mark")
     public void markExerciseAsDone(
             @RequestParam String exerciseName,
             @RequestParam String email,
@@ -75,7 +72,7 @@ public class ProgressControllerImpl implements ProgressController {
         );
     }
 
-    @GetMapping(value = "/api/progress/done_exercises")
+    @GetMapping(value = "/done_exercises")
     public ResponseEntity<List<ExerciseDone>> getDoneExercisesByYearAndMonth(
             @RequestParam String email,
             @RequestParam String exerciseName,
@@ -87,5 +84,13 @@ public class ProgressControllerImpl implements ProgressController {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @GetMapping(value = "/recommendation")
+    public ResponseEntity<ProgressRecommendationDTO> getRecommendation(
+            @RequestParam int reps,
+            @RequestParam float weight,
+            @RequestParam String goal) {
+        return ResponseEntity.ok(progressService.getRecommendation(reps, weight, goal));
     }
 }

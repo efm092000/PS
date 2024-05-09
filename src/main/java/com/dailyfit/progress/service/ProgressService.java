@@ -1,6 +1,7 @@
 package com.dailyfit.progress.service;
 
 import com.dailyfit.progress.ExerciseDone;
+import com.dailyfit.progress.ProgressRecommendationDTO;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -22,4 +23,6 @@ public interface ProgressService {
     void markExerciseAsDone(ExerciseDone exerciseDone) throws SQLException;
 
     List<ExerciseDone> getDoneExercisesByYearAndMonth(String email, String exerciseName, int year, int month) throws SQLException, ParseException;
+
+    ProgressRecommendationDTO getRecommendation(int reps, float weight, String goal);
 }
