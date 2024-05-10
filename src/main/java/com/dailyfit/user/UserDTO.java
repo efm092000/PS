@@ -7,5 +7,6 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 public record UserDTO(@JsonGetter("email") String email,
                       @JsonGetter("name") String name,
                       @JsonGetter("isPremium") boolean premium,
-                      @JsonGetter("isAdmin") boolean admin) {
+                      @JsonGetter("isAdmin") boolean admin,
+                      @JsonGetter("profilePicture") String profilePicture) {
 }

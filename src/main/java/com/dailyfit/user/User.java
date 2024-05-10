@@ -13,13 +13,15 @@ public class User {
     private boolean premium;
 
     private boolean admin;
+    private String profilePicture;
 
-    public User(String email, String password, String name, boolean premium, boolean admin) {
+    public User(String email, String password, String name, boolean premium, boolean admin, String profilePicture) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.premium = premium;
         this.admin = admin;
+        this.profilePicture = profilePicture;
     }
 
     @Override
@@ -41,6 +43,7 @@ public class User {
                 "name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", premium='" + premium + '\'' +
+                ", profilePictUrl='" + profilePicture + '\'' +
                 ", password='" + password + "'";
     }
 
@@ -74,4 +77,10 @@ public class User {
 
     @JsonGetter("isAdmin")
     public boolean admin() {return admin;}
+
+    @JsonGetter("profilePicture")
+    public String profilePicture() { return profilePicture;}
+
+    public void setProfilePicture(String profilePicture) { this.profilePicture = profilePicture;}
+
 }
