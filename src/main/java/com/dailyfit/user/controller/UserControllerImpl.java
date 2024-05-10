@@ -2,13 +2,19 @@ package com.dailyfit.user.controller;
 
 import com.dailyfit.routine.service.RoutineService;
 import com.dailyfit.routine.Routine;
+import com.dailyfit.user.ResourceDTO;
 import com.dailyfit.user.User;
 import com.dailyfit.user.UserDTO;
+import com.dailyfit.user.exception.FileNotFoundException;
+import com.dailyfit.user.exception.FileNotSupportedException;
 import com.dailyfit.user.exception.UserAlreadyExistsException;
+import com.dailyfit.user.exception.UserNotFoundException;
 import com.dailyfit.user.service.UserService;
 import com.dailyfit.weekly.WeeklyPlan;
 import com.dailyfit.weekly.service.WeeklyPlanService;
+import org.apache.tomcat.util.file.ConfigurationSource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +22,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -36,8 +47,8 @@ public class UserControllerImpl implements UserController {
 
     @PostMapping(value = "/{email}")
     public ResponseEntity<?> createUser(@PathVariable String email,
-                                           @RequestParam String password,
-                                           @RequestParam String name) {
+                                        @RequestParam String password,
+                                        @RequestParam String name) {
         try {
             User user = userService.createUser(email, password, name);
             return ResponseEntity.ok(new UserDTO(user.email(), user.name(), user.premium(), user.admin(), user.profilePicture()));
@@ -75,7 +86,8 @@ public class UserControllerImpl implements UserController {
                                            @RequestParam(required = false) boolean premium) {
         User user;
         try {
-            user = userService.updateUser(email, password, name, premium);
+            user = userService.updateUser(email, password, name, premium
+            );
             Optional<User> optionalUser = userService.getUserByEmail(email);
             if (optionalUser.isEmpty()) {
                 return ResponseEntity.notFound().build();
@@ -115,45 +127,32 @@ public class UserControllerImpl implements UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-    @PostMapping("/profile-pictures")
-    private ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file) {
+
+    @PostMapping("/{email}/profile-picture")
+    private ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file, @PathVariable String email) {
         try {
-            return ResponseEntity.ok(userService.handleFileUpload(file));
+
+            return ResponseEntity.ok(userService.handleFileUpload(email, file));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
     @GetMapping(value = "/{email}/profile-picture")
-    public ResponseEntity<Resource> getUserProfilePicture(@PathVariable String email) {
+    public ResponseEntity<FileSystemResource> getUserProfilePicture(@PathVariable String email) {
         try {
-            Optional<User> optionalUser = userService.getUserByEmail(email);
-            if (optionalUser.isPresent()) {
-                String profilePicturePath = optionalUser.get().profilePicture();
-                Resource resource = new ClassPathResource("profile-pictures/" + profilePicturePath);
-
-                if (resource.exists() && resource.isReadable()) {
-                    MediaType mediaType;
-                    if (profilePicturePath.endsWith(".jpg") || profilePicturePath.endsWith(".jpeg")) {
-                        mediaType = MediaType.IMAGE_JPEG;
-                    } else if (profilePicturePath.endsWith(".png")) {
-                        mediaType = MediaType.IMAGE_PNG;
-                    } else {
-                        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
-                    }
-
-                    return ResponseEntity.ok()
-                            .contentType(mediaType)
-                            .body(resource);
-                } else {
-                    return ResponseEntity.notFound().build();
-                }
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            ResourceDTO resourceDTO = userService.getProfilePicture(email);
+            return ResponseEntity.ok().contentType(resourceDTO.mediaType()).body(resourceDTO.fsr());
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
         } catch (SQLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotSupportedException e) {
+            throw new RuntimeException(e);
         }
+
     }
 
 }

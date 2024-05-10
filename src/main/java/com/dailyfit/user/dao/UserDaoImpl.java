@@ -105,6 +105,18 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+    @Override
+    public void updateProfilePicture(String email, String profilePicture) throws SQLException {
+        try (ResultSet resultSet = sqlQueryUser(email)) {
+            if (resultSet.next()) {
+                sqlUpdateProfilePicture(email,profilePicture);
+                return;
+            }
+            System.err.println("User not found");
+            // Throw exception
+        }
+    }
+
     private void sqlUpdateName(String email, String name) throws SQLException {
         connection.createStatement().execute(String.format("UPDATE \"user\" SET name = '%s' WHERE email = '%s'", name, email));
     }
@@ -115,6 +127,10 @@ public class UserDaoImpl implements UserDao {
 
     private void sqlUpdatePremium(String email, int premium) throws SQLException {
         connection.createStatement().execute(String.format("UPDATE \"user\" SET isPremium = %d WHERE email = '%s'", premium, email));
+    }
+
+    private void sqlUpdateProfilePicture(String email, String profilePicture) throws SQLException {
+        connection.createStatement().execute(String.format("UPDATE \"user\" SET profilePicture = '%s' WHERE email = '%s'", profilePicture, email));
     }
 
     private ResultSet sqlQueryUser(String email) throws SQLException {

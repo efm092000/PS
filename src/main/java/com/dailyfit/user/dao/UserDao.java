@@ -16,4 +16,6 @@ public interface UserDao {
     void updateName(String email, String name)throws SQLException;
 
     void updatePremium(String email, boolean premium)throws SQLException;
+
+    void updateProfilePicture(String email, String profilePicture) throws SQLException;
 }

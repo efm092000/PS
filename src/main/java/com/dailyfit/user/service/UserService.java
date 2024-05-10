@@ -1,7 +1,12 @@
 package com.dailyfit.user.service;
 
+import com.dailyfit.user.ResourceDTO;
 import com.dailyfit.user.User;
+import com.dailyfit.user.exception.FileNotFoundException;
+import com.dailyfit.user.exception.FileNotSupportedException;
 import com.dailyfit.user.exception.UserAlreadyExistsException;
+import com.dailyfit.user.exception.UserNotFoundException;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLException;
@@ -13,5 +18,6 @@ public interface UserService {
     User updateUser(String email, String password, String name, boolean premium) throws SQLException;
     void deleteUser(String email) throws SQLException;
     Optional<User> authenticateUser(String email, String password) throws SQLException;
-    String handleFileUpload(MultipartFile file) throws Exception;
+    String handleFileUpload(String email, MultipartFile file) throws Exception;
+    ResourceDTO getProfilePicture(String email) throws FileNotFoundException, UserNotFoundException, SQLException, FileNotSupportedException;
 }
