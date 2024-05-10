@@ -12,21 +12,13 @@ import com.dailyfit.user.exception.UserNotFoundException;
 import com.dailyfit.user.service.UserService;
 import com.dailyfit.weekly.WeeklyPlan;
 import com.dailyfit.weekly.service.WeeklyPlanService;
-import org.apache.tomcat.util.file.ConfigurationSource;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -94,6 +86,8 @@ public class UserControllerImpl implements UserController {
             }
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return ResponseEntity.ok(user);
     }
@@ -143,13 +137,7 @@ public class UserControllerImpl implements UserController {
         try {
             ResourceDTO resourceDTO = userService.getProfilePicture(email);
             return ResponseEntity.ok().contentType(resourceDTO.mediaType()).body(resourceDTO.fsr());
-        } catch (UserNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (FileNotSupportedException e) {
+        } catch (UserNotFoundException | SQLException | FileNotFoundException | FileNotSupportedException e) {
             throw new RuntimeException(e);
         }
 

@@ -8,9 +8,7 @@ import com.dailyfit.user.exception.FileNotSupportedException;
 import com.dailyfit.user.exception.UserAlreadyExistsException;
 import com.dailyfit.user.exception.UserNotFoundException;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,7 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(String email, String password, String name, boolean premium) throws SQLException {
+    public User updateUser(String email, String password, String name, boolean premium) throws SQLException, UserNotFoundException {
         Optional<User> user1 = userDao.readUser(email);
         if (user1.isPresent()) {
             if (password == null && user1.get().premium() == premium) {
@@ -60,9 +58,12 @@ public class UserServiceImpl implements UserService {
             if (user1.get().premium() != premium) {
                 userDao.updatePremium(email, premium);
             }
-
+            Optional <User> updatedUser = userDao.readUser(email);
+            if(updatedUser.isPresent()){
+                return updatedUser.get();
+            }
         }
-        return userDao.readUser(email).get();
+        throw new UserNotFoundException(email);
     }
 
     @Override
@@ -103,6 +104,7 @@ public class UserServiceImpl implements UserService {
                 return ("File size must be less then or equal 10MB");
             }
 
+            assert fileOriginalName != null;
             if (!fileOriginalName.endsWith(".jpg") && !fileOriginalName.endsWith(".jpeg") && !fileOriginalName.endsWith(".png")) {
                 return ("Only JPG, JPEG, PNG files are allowed");
             }

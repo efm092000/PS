@@ -46,18 +46,6 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void updateUser(User user) throws SQLException {
-        try (ResultSet resultSet = sqlQueryUser(user.email())) {
-            if (resultSet.next()) {
-                sqlUpdateUser(user);
-                return;
-            }
-            System.err.println("User not found");
-            // Throw exception
-        }
-    }
-
-    @Override
     public void deleteUser(String email) throws SQLException {
         try (ResultSet resultSet = sqlQueryUser(email)) {
             if (resultSet.next()) {
@@ -143,10 +131,6 @@ public class UserDaoImpl implements UserDao {
 
     private void sqlDeleteUser(String email) throws SQLException {
         connection.createStatement().execute(String.format("DELETE FROM \"user\" WHERE email = '%s'", email));
-    }
-
-    private void sqlUpdateUser(User user) throws SQLException {
-        connection.createStatement().execute(String.format("UPDATE \"user\" SET password = '%s', name = '%s', isPremium = '%b' WHERE email = '%s'", user.password(), user.name(), user.email(), user.premium()));
     }
 
 }
