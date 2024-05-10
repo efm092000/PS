@@ -2,6 +2,7 @@ package com.dailyfit.user.service;
 
 import com.dailyfit.user.User;
 import com.dailyfit.user.exception.UserAlreadyExistsException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -12,4 +13,5 @@ public interface UserService {
     User updateUser(String email, String password, String name, boolean premium) throws SQLException;
     void deleteUser(String email) throws SQLException;
     Optional<User> authenticateUser(String email, String password) throws SQLException;
+    String handleFileUpload(MultipartFile file) throws Exception;
 }
