@@ -24,7 +24,7 @@ public class UserDaoTests {
         String email = "real@email.com";
         String actualPassword = "actualPassword";
         String actualName = "actualName";
-        User expectedUser = new User(email, actualPassword, actualName);
+        User expectedUser = new User(email, actualPassword, actualName, false, false);
 
         UserDao userDao = new UserDaoImpl(connection);
         ResultSet mockResultSet = mock(ResultSet.class);
@@ -35,6 +35,6 @@ public class UserDaoTests {
         when(mockResultSet.getString("password")).thenReturn(actualPassword);
         when(mockResultSet.getString("name")).thenReturn(actualName);
 
-        assertThat(userDao.readUser(email).orElse(new User("", "", ""))).isEqualTo(expectedUser);
+        assertThat(userDao.readUser(email).orElse(new User("", "", "", false, false))).isEqualTo(expectedUser);
     }
 }

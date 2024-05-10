@@ -28,20 +28,25 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             throw new UserAlreadyExistsException(email);
         }
-        User user = new User(email, password, name);
+        User user = new User(email, password, name, false, false);
         userDao.createUser(user);
         return user;
     }
 
     @Override
-    public User updateUser(String email, String password, String name) throws SQLException {
+    public User updateUser(String email, String password, String name, boolean premium) throws SQLException {
         Optional<User> user1 = userDao.readUser(email);
         if (user1.isPresent()){
-            if(password == null){
+            if(password == null && user1.get().premium() == premium){
                 userDao.updateName(email,name);
-            } else {
+            }
+            if(name == null && user1.get().premium() == premium){
                 userDao.updatePassword(email,password);
             }
+            if(user1.get().premium() != premium){
+                userDao.updatePremium(email,premium);
+            }
+
         }
         return userDao.readUser(email).get();
     }

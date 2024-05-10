@@ -37,7 +37,7 @@ public class UserControllerImpl implements UserController {
                                            @RequestParam String name) {
         try {
             User user = userService.createUser(email, password, name);
-            return ResponseEntity.ok(new UserDTO(user.email(), user.name()));
+            return ResponseEntity.ok(new UserDTO(user.email(), user.name(), user.premium(), user.admin()));
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         } catch (UserAlreadyExistsException e) {
@@ -49,7 +49,7 @@ public class UserControllerImpl implements UserController {
     public ResponseEntity<UserDTO> authenticateUser(@RequestBody User user) {
         try {
             Optional<User> optionalUser = userService.authenticateUser(user.email(), user.password());
-            return optionalUser.map(value -> ResponseEntity.ok(new UserDTO(value.email(), value.name()))).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null));
+            return optionalUser.map(value -> ResponseEntity.ok(new UserDTO(value.email(), value.name(), value.premium(), value.admin()))).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null));
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -59,7 +59,7 @@ public class UserControllerImpl implements UserController {
     public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
         try {
             Optional<User> optionalUser = userService.getUserByEmail(email);
-            return optionalUser.map(user -> ResponseEntity.ok(new UserDTO(user.email(), user.name()))).orElseGet(() -> ResponseEntity.notFound().build());
+            return optionalUser.map(user -> ResponseEntity.ok(new UserDTO(user.email(), user.name(), user.premium(), user.admin()))).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -68,10 +68,11 @@ public class UserControllerImpl implements UserController {
     @PutMapping(value = "/{email}")
     public ResponseEntity<User> updateUser(@PathVariable String email,
                                            @RequestParam(required = false) String password,
-                                           @RequestParam(required = false) String name) {
+                                           @RequestParam(required = false) String name,
+                                           @RequestParam(required = false) boolean premium) {
         User user;
         try {
-            user = userService.updateUser(email, password, name);
+            user = userService.updateUser(email, password, name, premium);
             Optional<User> optionalUser = userService.getUserByEmail(email);
             if (optionalUser.isEmpty()) {
                 return ResponseEntity.notFound().build();

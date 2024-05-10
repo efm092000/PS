@@ -10,11 +10,16 @@ public class User {
     private final String email;
     private String name;
     private String password;
+    private boolean premium;
 
-    public User(String email, String password, String name) {
+    private boolean admin;
+
+    public User(String email, String password, String name, boolean premium, boolean admin) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.premium = premium;
+        this.admin = admin;
     }
 
     @Override
@@ -27,7 +32,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, email, password);
+        return Objects.hash(name, email, password, premium);
     }
 
     @Override
@@ -35,6 +40,7 @@ public class User {
         return "User:" +
                 "name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", premium='" + premium + '\'' +
                 ", password='" + password + "'";
     }
 
@@ -60,4 +66,12 @@ public class User {
     public void name(String name) {
         this.name = name;
     }
+
+    @JsonGetter("isPremium")
+    public boolean premium() { return premium; }
+
+    public void setPremium(boolean premium) { this.premium = premium; }
+
+    @JsonGetter("isAdmin")
+    public boolean admin() {return admin;}
 }
