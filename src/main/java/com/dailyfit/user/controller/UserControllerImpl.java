@@ -8,10 +8,13 @@ import com.dailyfit.user.exception.UserAlreadyExistsException;
 import com.dailyfit.user.service.UserService;
 import com.dailyfit.weekly.WeeklyPlan;
 import com.dailyfit.weekly.service.WeeklyPlanService;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -37,7 +40,7 @@ public class UserControllerImpl implements UserController {
                                            @RequestParam String name) {
         try {
             User user = userService.createUser(email, password, name);
-            return ResponseEntity.ok(new UserDTO(user.email(), user.name(), user.premium(), user.admin()));
+            return ResponseEntity.ok(new UserDTO(user.email(), user.name(), user.premium(), user.admin(), user.profilePicture()));
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         } catch (UserAlreadyExistsException e) {
@@ -49,7 +52,7 @@ public class UserControllerImpl implements UserController {
     public ResponseEntity<UserDTO> authenticateUser(@RequestBody User user) {
         try {
             Optional<User> optionalUser = userService.authenticateUser(user.email(), user.password());
-            return optionalUser.map(value -> ResponseEntity.ok(new UserDTO(value.email(), value.name(), value.premium(), value.admin()))).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null));
+            return optionalUser.map(value -> ResponseEntity.ok(new UserDTO(value.email(), value.name(), value.premium(), value.admin(), value.profilePicture()))).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null));
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -59,7 +62,7 @@ public class UserControllerImpl implements UserController {
     public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
         try {
             Optional<User> optionalUser = userService.getUserByEmail(email);
-            return optionalUser.map(user -> ResponseEntity.ok(new UserDTO(user.email(), user.name(), user.premium(), user.admin()))).orElseGet(() -> ResponseEntity.notFound().build());
+            return optionalUser.map(user -> ResponseEntity.ok(new UserDTO(user.email(), user.name(), user.premium(), user.admin(), user.profilePicture()))).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -112,4 +115,45 @@ public class UserControllerImpl implements UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+    @PostMapping("/profile-pictures")
+    private ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file) {
+        try {
+            return ResponseEntity.ok(userService.handleFileUpload(file));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping(value = "/{email}/profile-picture")
+    public ResponseEntity<Resource> getUserProfilePicture(@PathVariable String email) {
+        try {
+            Optional<User> optionalUser = userService.getUserByEmail(email);
+            if (optionalUser.isPresent()) {
+                String profilePicturePath = optionalUser.get().profilePicture();
+                Resource resource = new ClassPathResource("profile-pictures/" + profilePicturePath);
+
+                if (resource.exists() && resource.isReadable()) {
+                    MediaType mediaType;
+                    if (profilePicturePath.endsWith(".jpg") || profilePicturePath.endsWith(".jpeg")) {
+                        mediaType = MediaType.IMAGE_JPEG;
+                    } else if (profilePicturePath.endsWith(".png")) {
+                        mediaType = MediaType.IMAGE_PNG;
+                    } else {
+                        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
+                    }
+
+                    return ResponseEntity.ok()
+                            .contentType(mediaType)
+                            .body(resource);
+                } else {
+                    return ResponseEntity.notFound().build();
+                }
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }
