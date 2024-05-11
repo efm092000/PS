@@ -126,7 +126,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     private void sqlCreateUser(User user) throws SQLException {
-        connection.createStatement().execute(String.format("INSERT INTO \"user\" (email, password, name, isPremium) VALUES ('%s', '%s', '%s', '%b')", user.email(), user.password(), user.name(), false));
+        connection.createStatement().execute(String.format("INSERT INTO \"user\" (email, password, name, isPremium, profilePicture) VALUES ('%s', '%s', '%s', '%b', '%s')", user.email(), user.password(), user.name(), false, user.profilePicture()));
     }
 
     private void sqlDeleteUser(String email) throws SQLException {
