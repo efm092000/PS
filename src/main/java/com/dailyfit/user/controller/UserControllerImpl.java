@@ -1,5 +1,6 @@
 package com.dailyfit.user.controller;
 
+import com.dailyfit.image.service.ImageService;
 import com.dailyfit.routine.service.RoutineService;
 import com.dailyfit.routine.Routine;
 import com.dailyfit.user.ResourceDTO;
@@ -30,11 +31,13 @@ public class UserControllerImpl implements UserController {
     private final UserService userService;
     private final RoutineService routineService;
     private final WeeklyPlanService weeklyPlanService;
+    private final ImageService imageService;
 
-    public UserControllerImpl(UserService userService, RoutineService routineService, WeeklyPlanService weeklyPlanService) {
+    public UserControllerImpl(UserService userService, RoutineService routineService, WeeklyPlanService weeklyPlanService, ImageService imageService) {
         this.userService = userService;
         this.routineService = routineService;
         this.weeklyPlanService = weeklyPlanService;
+        this.imageService = imageService;
     }
 
     @PostMapping(value = "/{email}")
@@ -125,22 +128,13 @@ public class UserControllerImpl implements UserController {
     @PostMapping("/{email}/profile-picture")
     private ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file, @PathVariable String email) {
         try {
-
-            return ResponseEntity.ok(userService.handleFileUpload(email, file));
-        } catch (Exception e) {
+            Optional<User> optionalUser = userService.getUserByEmail(email);
+            optionalUser.ifPresent(user -> imageService.deleteImage(user.profilePicture()));
+            String imageUrl = imageService.saveImage(file);
+            userService.updateProfilePicture(email, imageUrl);
+            return ResponseEntity.ok(imageUrl);
+        } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
-    @GetMapping(value = "/{email}/profile-picture")
-    public ResponseEntity<FileSystemResource> getUserProfilePicture(@PathVariable String email) {
-        try {
-            ResourceDTO resourceDTO = userService.getProfilePicture(email);
-            return ResponseEntity.ok().contentType(resourceDTO.mediaType()).body(resourceDTO.fsr());
-        } catch (UserNotFoundException | SQLException | FileNotFoundException | FileNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
 }

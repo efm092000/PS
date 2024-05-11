@@ -17,6 +17,5 @@ public interface UserService {
     User updateUser(String email, String password, String name, boolean premium) throws SQLException, UserNotFoundException;
     void deleteUser(String email) throws SQLException;
     Optional<User> authenticateUser(String email, String password) throws SQLException;
-    String handleFileUpload(String email, MultipartFile file) throws Exception;
-    ResourceDTO getProfilePicture(String email) throws FileNotFoundException, UserNotFoundException, SQLException, FileNotSupportedException;
+    void updateProfilePicture(String email, String imageUrl) throws SQLException;
 }
