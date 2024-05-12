@@ -3,17 +3,13 @@ package com.dailyfit.user.controller;
 import com.dailyfit.image.service.ImageService;
 import com.dailyfit.routine.service.RoutineService;
 import com.dailyfit.routine.Routine;
-import com.dailyfit.user.ResourceDTO;
 import com.dailyfit.user.User;
 import com.dailyfit.user.UserDTO;
-import com.dailyfit.user.exception.FileNotFoundException;
-import com.dailyfit.user.exception.FileNotSupportedException;
 import com.dailyfit.user.exception.UserAlreadyExistsException;
 import com.dailyfit.user.exception.UserNotFoundException;
 import com.dailyfit.user.service.UserService;
 import com.dailyfit.weekly.WeeklyPlan;
 import com.dailyfit.weekly.service.WeeklyPlanService;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +56,7 @@ public class UserControllerImpl implements UserController {
             Optional<User> optionalUser = userService.authenticateUser(user.email(), user.password());
             return optionalUser.map(value -> ResponseEntity.ok(new UserDTO(value.email(), value.name(), value.premium(), value.admin(), value.profilePicture()))).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null));
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -126,13 +123,14 @@ public class UserControllerImpl implements UserController {
     }
 
     @PostMapping("/{email}/profile-picture")
-    private ResponseEntity<String> uploadProfilePicture(@RequestParam("file") MultipartFile file, @PathVariable String email) {
+    private ResponseEntity<User> uploadProfilePicture(@RequestParam("file") MultipartFile file, @PathVariable String email) {
         try {
             Optional<User> optionalUser = userService.getUserByEmail(email);
             optionalUser.ifPresent(user -> imageService.deleteImage(user.profilePicture()));
             String imageUrl = imageService.saveImage(file);
             userService.updateProfilePicture(email, imageUrl);
-            return ResponseEntity.ok(imageUrl);
+            Optional<User> updatedUser = userService.getUserByEmail(email);
+            return updatedUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
