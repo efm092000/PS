@@ -37,16 +37,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(String email, String password, String name, boolean premium) throws SQLException, UserNotFoundException {
+    public User updateUser(String email, String password, String name, Boolean premium) throws SQLException, UserNotFoundException {
         Optional<User> user1 = userDao.readUser(email);
         if (user1.isPresent()) {
-            if (password == null && user1.get().premium() == premium) {
+            System.out.println(email);
+            System.out.println(name);
+            System.out.println(password);
+            System.out.println(premium);
+
+            if (name != null ) {
                 userDao.updateName(email, name);
             }
-            if (name == null && user1.get().premium() == premium) {
+            if (password != null) {
                 userDao.updatePassword(email, password);
             }
-            if (user1.get().premium() != premium) {
+            if (premium != null) {
                 userDao.updatePremium(email, premium);
             }
             Optional <User> updatedUser = userDao.readUser(email);

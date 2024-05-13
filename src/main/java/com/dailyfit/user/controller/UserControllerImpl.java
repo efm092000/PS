@@ -75,7 +75,7 @@ public class UserControllerImpl implements UserController {
     public ResponseEntity<User> updateUser(@PathVariable String email,
                                            @RequestParam(required = false) String password,
                                            @RequestParam(required = false) String name,
-                                           @RequestParam(required = false) boolean premium) {
+                                           @RequestParam(required = false) Boolean premium) {
         User user;
         try {
             user = userService.updateUser(email, password, name, premium
