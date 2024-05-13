@@ -17,4 +17,6 @@ public interface RoutineService {
 
     RoutineExerciseDTO addExerciseToRoutine(int rid, String name, int sets, int reps) throws SQLException;
     void deleteExerciseFromRoutine(int rid, String name, int sets, int reps) throws SQLException;
+
+    Routine generateRoutine(String name, String email, String muscleGroup, int maxExercises) throws SQLException;
 }

@@ -1,5 +1,7 @@
 package com.dailyfit.routine.service;
 
+import com.dailyfit.exercise.Exercise;
+import com.dailyfit.exercise.dao.ExerciseDao;
 import com.dailyfit.routine.Routine;
 import com.dailyfit.routine.RoutineExerciseDTO;
 import com.dailyfit.routine.dao.RoutineDao;
@@ -12,9 +14,12 @@ import java.util.Optional;
 @Service
 public class RoutineServiceImpl implements RoutineService{
     private final RoutineDao routineDao;
+    private final ExerciseDao exerciseDao;
 
-    public RoutineServiceImpl(RoutineDao routineDao) {
+    public RoutineServiceImpl(RoutineDao routineDao, ExerciseDao exerciseDao) {
+
         this.routineDao = routineDao;
+        this.exerciseDao = exerciseDao;
     }
 
     @Override
@@ -57,5 +62,18 @@ public class RoutineServiceImpl implements RoutineService{
     @Override
     public void deleteExerciseFromRoutine(int rid, String name, int sets, int reps) throws SQLException {
         routineDao.deleteExerciseFromRoutine(rid, name, sets, reps);
+    }
+
+    @Override
+    public Routine generateRoutine(String name, String email, String muscleGroup, int maxExercises) throws SQLException{
+        Routine routine = routineDao.createRoutine(name, email);
+        List<Exercise> exercises = exerciseDao.readExercises(muscleGroup, null, null, null);
+        int i=0;
+        for (Exercise exercise : exercises) {
+            if (i == maxExercises){break;}
+            i++;
+            routineDao.addExerciseToRoutine(routine.rid(), exercise.getName(), 0, 0);
+        }
+        return routine;
     }
 }

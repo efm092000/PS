@@ -104,4 +104,16 @@ public class RoutineControllerImpl implements RoutineController{
 
         return ResponseEntity.ok("Exercise was deleted from routine successfully");
     }
+    @PostMapping(value = "/generate/{name}")
+    public ResponseEntity<Routine> generateRoutine(@PathVariable String name,
+                                                   @RequestParam String email,
+                                                   @RequestParam String muscleGroup,
+                                                   @RequestParam int maxExercises) {
+        try {
+            Routine routine = routineService.generateRoutine(name, email, muscleGroup, maxExercises);
+            return ResponseEntity.ok(routine);
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }
