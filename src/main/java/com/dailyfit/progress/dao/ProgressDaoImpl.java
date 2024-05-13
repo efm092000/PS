@@ -57,9 +57,7 @@ public class ProgressDaoImpl implements ProgressDao {
                 }
             }
             return exercises;
-        } catch (SQLException e) {
-            return exercises;
-        } catch (ParseException e) {
+        } catch (Exception e) {
             return exercises;
         }
     }
@@ -86,7 +84,7 @@ public class ProgressDaoImpl implements ProgressDao {
         try {
             connection.createStatement().execute(
                     String.format(
-                            "INSERT INTO weeklyToWeek (wid,week,email) VALUES (%d,'%s','%s')",
+                            "INSERT OR REPLACE INTO weeklyToWeek (wid,week,email) VALUES (%d,'%s','%s')",
                     wid,
                     formatDay(week),
                     email));
